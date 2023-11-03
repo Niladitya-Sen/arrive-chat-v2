@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '../ui/button'
 import { BsPerson } from 'react-icons/bs'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '../ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
 import { Input } from '../ui/input'
 
 export default function Navbar() {
@@ -12,12 +12,13 @@ export default function Navbar() {
             <nav className='text-white flex items-center justify-around'>
                 <Select>
                     <SelectTrigger className={cn("w-[180px]")}>
-                        <SelectValue placeholder="Theme" />
+                        <SelectValue placeholder="Language" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
+                        <SelectItem value="english">English</SelectItem>
+                        <SelectItem value="french">French</SelectItem>
+                        <SelectItem value="german">German</SelectItem>
+                        <SelectItem value="spanish">Spanish</SelectItem>
                     </SelectContent>
                 </Select>
                 <h1>Arrive Chat</h1>
