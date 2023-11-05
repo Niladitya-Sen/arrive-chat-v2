@@ -1,7 +1,8 @@
 import React from 'react'
+import ChatLayout from '@/components/custom/ChatLayout'
 
-export default function Service({ params }: { params: { slug: string } }) {
+export default function Service({ params }: Readonly<{ params: { slug: string } }>) {
     return (
-        <div>{params.slug}</div>
+        <ChatLayout firstMessage={params.slug} />
     )
 }

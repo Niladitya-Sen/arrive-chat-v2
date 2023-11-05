@@ -7,7 +7,7 @@ type ServicesSidebarNavigationState = {
 
 export const useServicesSidebarNavigation = create<ServicesSidebarNavigationState>(
     (set) => ({
-        isOpen: false,
+        isOpen: true,
         toggle: () => set((state) => ({ isOpen: !state.isOpen })),
     })
 );

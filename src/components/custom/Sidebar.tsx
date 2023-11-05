@@ -4,18 +4,21 @@ import Link from 'next/link';
 import React from 'react';
 import { HiHome } from 'react-icons/hi2';
 import { BsFillBellFill } from 'react-icons/bs';
-import { useSearchParams, usePathname } from 'next/navigation';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useChatSidebarNavigation } from '@/store/ChatSidebarNavigation';
 import { cn } from '@/lib/utils';
 import { CgClose } from 'react-icons/cg';
 import { HiMenuAlt2 } from 'react-icons/hi';
 import { FaPersonBooth } from 'react-icons/fa';
+import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 
 export default function Sidebar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const isOpen = useChatSidebarNavigation(state => state.isOpen);
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
+    const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
+    const router = useRouter();
 
     return (
         <section
@@ -55,27 +58,29 @@ export default function Sidebar() {
                 <BsFillBellFill className='text-2xl' />
                 <p className='text-sm'>Notifications</p>
             </Link>
-            <Link
-                href={{
-                    pathname: '/services',
-                    query: {
-                        language: searchParams.get('language')
+            <button
+                onClick={() => {
+                    if (pathname.includes('services')) {
+                        toggleSidebar();
+                        toggleServicesSidebar();
+                    } else {
+                        router.push(`/services?language=${searchParams.get('language')}`)
                     }
                 }}
-                onClick={toggleSidebar}
                 className={`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`}>
                 <FaPersonBooth className='text-2xl' />
                 <p className='text-sm'>Services</p>
-            </Link>
+            </button>
         </section>
     )
 }
 
 export function SidebarToggleButton() {
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
+
     return (
         <button
-            className='block sm:hidden text-2xl rounded-2xl bg-primary p-4 w-[4rem] text-center text-white m-4 aspect-square'
+            className='static sm:hidden text-2xl rounded-2xl bg-primary p-4 text-center text-white m-4 w-fit'
             onClick={toggleSidebar}
         >
             <HiMenuAlt2 />
