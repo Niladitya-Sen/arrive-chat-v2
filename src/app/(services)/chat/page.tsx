@@ -6,7 +6,7 @@ import { IoPaperPlaneOutline } from 'react-icons/io5';
 import ChatBubble from '@/components/custom/ChatBubble';
 import type { MessageType } from '@/types/types';
 
-export default function page({ searchParams }: { searchParams: { [key: string]: string | string[] } }) {
+export default function Chat({ searchParams }: { searchParams: { [key: string]: string | string[] } }) {
     const { language } = searchParams;
     const chatAreaRef = React.useRef<HTMLDivElement>(null);
     const chatInputRef = React.useRef<HTMLInputElement>(null);
