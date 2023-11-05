@@ -12,10 +12,10 @@ export default async function Home() {
     const hello = await getHello();
 
     return (
-        <main className='p-4 bg-[#120f09] min-h-screen max-w-screen-2xl'>
+        <main className='p-4 flex flex-col bg-[#120f09] min-h-screen'>
             <Navbar />
             <section
-                className='flex flex-col items-center justify-center w-full h-screen'
+                className='flex flex-col items-center justify-center w-full flex-1'
             >
                 <p className='text-white text-xl'>{hello.message} coming from api call</p>
                 <Link

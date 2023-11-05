@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '../ui/button'
 import { BsPerson } from 'react-icons/bs'
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
-import { Input } from '../ui/input'
 
 export default function Navbar() {
     return (
@@ -31,42 +30,15 @@ export default function Navbar() {
                             })}
                         >
                             <BsPerson className='text-xl' />
-                            <p>Login/Sign up</p>
+                            <p>Language</p>
                         </div>
                     </DialogTrigger>
                     <DialogContent className={cn("sm:max-w-md bg-[#2f2f2f] p-10")}>
                         <DialogHeader className={cn("flex flex-row items-center justify-center text-xl font-semibold")}>
-                            <h1>Login to Arrive Chat</h1>
+                            <h1>Please Choose Language</h1>
                         </DialogHeader>
-                        <form className='flex flex-col items-center justify-center gap-4'>
-                            <div className='self-stretch'>
-                                <label htmlFor="name" className='text-[#7e7c7c] uppercase'>Name</label>
-                                <Input
-                                    type='text'
-                                    name="name"
-                                    placeholder='Enter your name'
-                                    className={cn('rounded-none border-0 border-b-[1.5px] border-white bg-transparent outline-none px-0')}
-                                />
-                            </div>
-                            <div className='self-stretch'>
-                                <label htmlFor="roomid" className='text-[#7e7c7c] uppercase'>Room ID</label>
-                                <Input
-                                    type='text'
-                                    name="roomid"
-                                    placeholder='Enter your room ID'
-                                    className={cn('rounded-none border-0 border-b-[1.5px] border-white bg-transparent outline-none px-0')}
-                                />
-                            </div>
-                            <div className='self-stretch'>
-                                <label htmlFor="bookingid" className='text-[#7e7c7c] uppercase'>Booking ID</label>
-                                <Input
-                                    type='text'
-                                    name="bookingid"
-                                    placeholder='Enter your booking ID'
-                                    className={cn('rounded-none border-0 border-b-[1.5px] border-white bg-transparent outline-none px-0')}
-                                />
-                            </div>
-                            <Select>
+                        <form action="/chat" className='flex flex-col items-center justify-center gap-4 mt-16'>
+                            <Select required name="language">
                                 <SelectTrigger className={cn("bg-transparent")}>
                                     <SelectValue placeholder="Preferred Language" />
                                 </SelectTrigger>
@@ -79,8 +51,8 @@ export default function Navbar() {
                             </Select>
                             <Button
                                 size={'lg'}
-                                className={cn('bg-[#1c1c1c] hover:bg-[#1c1c1c]/70 text-white uppercase rounded-none px-14 py-6 border-2 border-[#615641]')}
-                            >Login</Button>
+                                className={cn('mt-8 bg-[#1c1c1c] text-white uppercase rounded-none px-14 py-6 border-2 border-[#615641] hover:bg-[#615641]')}
+                            >Start</Button>
                         </form>
                     </DialogContent>
                 </Dialog>
