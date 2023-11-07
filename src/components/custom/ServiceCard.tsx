@@ -35,7 +35,7 @@ export default function ServiceCard({ title, image }: Readonly<{ title: string, 
                     </div>
                 </div>
             </DialogTrigger>
-            <DialogContent className='w-[500px]'>
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
                         {title}

@@ -4,13 +4,14 @@ import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '../ui/button'
 import { BsPerson } from 'react-icons/bs'
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
+import Image from 'next/image'
 
 export default function Navbar() {
     return (
         <header>
             <nav className='text-white flex items-center justify-around'>
                 <Select>
-                    <SelectTrigger className={cn("w-[180px]")}>
+                    <SelectTrigger className={cn("w-[180px] hidden sm:flex")}>
                         <SelectValue placeholder="Language" />
                     </SelectTrigger>
                     <SelectContent>
@@ -20,7 +21,17 @@ export default function Navbar() {
                         <SelectItem value="spanish">Spanish</SelectItem>
                     </SelectContent>
                 </Select>
-                <h1>Arrive Chat</h1>
+                <div className='flex flex-col items-center justify-center'>
+                    <Image
+                        src="/arrivechat.png"
+                        alt="Arrive Chat"
+                        width={202}
+                        height={74}
+                        priority
+                        className='w-[156px] h-[57px]'
+                    />
+                    <p className='text-2xl'>وصول الدردشة</p>
+                </div>
                 <Dialog>
                     <DialogTrigger asChild>
                         <div
@@ -33,7 +44,7 @@ export default function Navbar() {
                             <p>Language</p>
                         </div>
                     </DialogTrigger>
-                    <DialogContent className={cn("sm:max-w-md bg-[#2f2f2f] p-10")}>
+                    <DialogContent className={cn("bg-[#2f2f2f] p-10")}>
                         <DialogHeader className={cn("flex flex-row items-center justify-center text-xl font-semibold")}>
                             <h1>Please Choose Language</h1>
                         </DialogHeader>
