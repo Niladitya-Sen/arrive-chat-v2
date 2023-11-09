@@ -15,15 +15,7 @@ const playfairDisplay = Playfair_Display({
     display: 'swap',
 })
 
-async function getHello() {
-    const response = await fetch("https://ae.arrive.waysdatalabs.com/api");
-    const data = await response.json();
-    return data;
-}
-
 export default async function Home() {
-    const hello = await getHello();
-
     return (
         <main className='bg-[url("/cover.jpg")] bg-cover bg-top bg-no-repeat'>
             <section className='bg-[#120f09] bg-opacity-90 flex flex-col p-4 pb-0 min-h-screen'>
