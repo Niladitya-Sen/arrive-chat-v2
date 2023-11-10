@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
         return response;
     }
 
-    if (!request.cookies.get('token') && request.nextUrl.pathname !== "/") {
+    if (!request.cookies.get('token') && request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.includes('captain')) {
         return NextResponse.redirect('https://ae.arrive.waysdatalabs.com/');
     }
 
@@ -33,6 +33,8 @@ export async function middleware(request: NextRequest) {
         response.cookies.set('language', language);
         return response;
     }
+
+    return NextResponse.next();
 }
 
 export const config = {

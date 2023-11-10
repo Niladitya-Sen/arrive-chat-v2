@@ -1,12 +1,12 @@
-import Navbar from '@/components/custom/Navbar'
-import React from 'react'
-import { Playfair_Display } from 'next/font/google'
+import React from 'react';
+import { Playfair_Display } from 'next/font/google';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import EllipseButton from '@/components/custom/EllipseButton';
 import { BsStar } from 'react-icons/bs';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import CaptainNavbar from '@/components/custom/CaptainNavbar';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -15,11 +15,11 @@ const playfairDisplay = Playfair_Display({
     display: 'swap',
 });
 
-export default async function Home() {
+export default async function CaptainHome() {
     return (
         <main className='bg-[url("/cover.jpg")] bg-cover bg-top bg-no-repeat'>
             <section className='bg-[#120f09] bg-opacity-90 flex flex-col p-4 pb-0 min-h-screen'>
-                <Navbar />
+                <CaptainNavbar />
                 <section
                     className='flex flex-col items-center justify-center w-full mt-8 max-w-3xl mx-auto px-2'
                 >

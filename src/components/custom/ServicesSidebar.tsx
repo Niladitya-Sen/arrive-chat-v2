@@ -7,6 +7,14 @@ import { cn } from '@/lib/utils';
 import { HiChevronDoubleLeft } from 'react-icons/hi';
 import ServiceCard from './ServiceCard';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
+import { Playfair_Display } from 'next/font/google';
+
+const playfairDisplay = Playfair_Display({
+    weight: ['400', '800'],
+    style: ['normal', 'italic'],
+    subsets: ['latin-ext'],
+    display: 'swap',
+})
 
 const services = [
     {
@@ -64,7 +72,7 @@ export default function ServicesSidebar() {
             })}
         >
             <div className='flex flex-row justify-between items-center w-full'>
-                <h1>Welcome to Arrive Chat</h1>
+                <h1 className={playfairDisplay.className}>Welcome to Arrive Chat</h1>
                 <button
                     className='text-2xl self-end'
                     onClick={toggleSidebar}
