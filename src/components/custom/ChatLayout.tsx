@@ -28,7 +28,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
 
     return (
         <section
-            className='max-w-4xl w-full h-[80dvh] m-auto p-2 flex flex-col'
+            className='relative isolate max-w-4xl w-full mx-auto mt-4 p-2 flex flex-col'
         >
             <div
                 ref={chatAreaRef}
@@ -39,7 +39,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
                 ))}
             </div>
             <form
-                className='bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black my-4 sm:mb-0'
+                className='sticky bottom-4 bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black my-4 sm:mb-0'
                 onSubmit={addToMessages}
             >
                 <Image

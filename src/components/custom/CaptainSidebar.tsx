@@ -3,19 +3,20 @@
 import Link from 'next/link';
 import React from 'react';
 import { HiHome } from 'react-icons/hi2';
-import { BsFillBellFill } from 'react-icons/bs';
+import { BsFillBellFill, BsPersonFill } from 'react-icons/bs';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useChatSidebarNavigation } from '@/store/ChatSidebarNavigation';
 import { cn } from '@/lib/utils';
 import { CgClose } from 'react-icons/cg';
 import { HiMenuAlt2 } from 'react-icons/hi';
-import { FaPersonBooth } from 'react-icons/fa';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
+import { useCaptainRoomSidebar } from '@/store/CaptainRoomSidebar';
 
-export default function Sidebar({ children, hiddenBtns }: Readonly<{ children?: React.ReactNode, hiddenBtns?: string[] }>) {
+export default function CaptainSidebar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const isOpen = useChatSidebarNavigation(state => state.isOpen);
+    const { isRoomOpen, toggleRoomSidebar } = useCaptainRoomSidebar(state => { return { isRoomOpen: state.isOpen, toggleRoomSidebar: state.toggle } });
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
     const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
     const router = useRouter();
@@ -33,55 +34,51 @@ export default function Sidebar({ children, hiddenBtns }: Readonly<{ children?: 
             >
                 <CgClose />
             </button>
-            <Link
-                hidden={hiddenBtns?.includes('home')}
-                href={{
-                    pathname: '/chat',
-                    query: {
-                        language: searchParams.get('language')
+            <button
+                onClick={() => {
+                    if (pathname.includes('/captain/chat')) {
+                        toggleSidebar();
+                        toggleServicesSidebar();
+                    } else {
+                        router.push(`/captain/chat?language=${searchParams.get('language')}`)
                     }
                 }}
-                onClick={toggleSidebar}
-                className={`flex sm:flex-col gap-2 items-center ${!pathname.includes('chat') ? 'text-primary' : 'text-black'}`}
-            >
+                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`)}>
                 <HiHome className='text-2xl' />
                 <p className='text-sm'>Home</p>
-            </Link>
+            </button>
             <Link
                 href={{
-                    pathname: '/notifications',
+                    pathname: '/captain/notifications',
                     query: {
                         language: searchParams.get('language')
                     }
                 }}
                 onClick={toggleSidebar}
-                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`, {
-                    'hidden': hiddenBtns?.includes('notifications')
-                })}>
+                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`)}>
                 <BsFillBellFill className='text-2xl' />
                 <p className='text-sm'>Notifications</p>
             </Link>
             <button
-                onClick={() => {
-                    if (pathname.includes('services')) {
-                        toggleSidebar();
-                        toggleServicesSidebar();
-                    } else {
-                        router.push(`/services?language=${searchParams.get('language')}`)
-                    }
-                }}
-                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`, {
-                    'hidden': hiddenBtns?.includes('services')
-                })}>
-                <FaPersonBooth className='text-2xl' />
-                <p className='text-sm'>Services</p>
+                className={`flex sm:flex-col gap-2 items-center`}
+            >
+                <BsPersonFill className="text-2xl text-primary" />
+                <p className='text-sm text-primary'>Profile</p>
             </button>
-            {children}
+            <button
+                className={`flex sm:flex-col gap-2 items-center`}
+                onClick={toggleRoomSidebar}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M14 6V21H3V19H5V3H14V4H19V19H21V21H17V6H14ZM10 11V13H12V11H10Z" fill="#615641" />
+                </svg>
+                <p className='text-sm text-primary'>Rooms</p>
+            </button>
         </section>
     )
 }
 
-export function SidebarToggleButton() {
+export function CaptainSidebarToggleButton() {
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
 
     return (

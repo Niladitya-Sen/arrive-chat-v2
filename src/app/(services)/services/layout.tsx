@@ -17,9 +17,9 @@ export default function ServicesLayout({ children }: Readonly<{ children: React.
         >
             <ServicesSidebar />
             <div
-                className={cn('hidden sm:block', {
+                className={cn('hidden sm:flex', {
                     'hidden': isOpen,
-                    'block': !isOpen,
+                    'flex': !isOpen,
                 })}
             >
                 {children}

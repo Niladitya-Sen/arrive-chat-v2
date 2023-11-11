@@ -26,8 +26,9 @@ export default function CaptainNavbar() {
         const formData = new FormData(e.currentTarget)
         const data = Object.fromEntries(formData.entries())
         console.log(data);
-        //TODO: api call to login and add jwt token, cookies and userType to cookies
-        router.push('/captain/chat');
+        //TODO: api call to login and add jwt token to cookies
+        localStorage.setItem('ac_ut', 'captain');
+        router.push('/chat');
     }
 
     return (
