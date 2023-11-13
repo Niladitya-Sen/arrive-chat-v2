@@ -61,6 +61,14 @@ export default function CaptainSidebar() {
             </Link>
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
+                onClick={() => {
+                    if (pathname.includes('/captain/profile')) {
+                        toggleSidebar();
+                        toggleServicesSidebar();
+                    } else {
+                        router.push("/captain/profile");
+                    }
+                }}
             >
                 <BsPersonFill className="text-2xl text-primary" />
                 <p className='text-sm text-primary'>Profile</p>

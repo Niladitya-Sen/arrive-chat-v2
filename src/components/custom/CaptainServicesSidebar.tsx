@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { HiChevronDoubleLeft } from 'react-icons/hi';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
@@ -20,46 +19,46 @@ const services = [
     {
         title: "Cab/Taxi Service",
         image: "/services/cab.jpg",
-        link: "/services/cab"
+        link: "/captain/services/cab"
     },
     {
         title: "Restaurant & Cafe",
         image: "/services/restaurants.jpg",
-        link: "/services/restaurants"
+        link: "/captain/services/restaurants"
     },
     {
         title: "Laundry Service",
         image: "/services/laundry.jpg",
-        link: "/services/laundry"
+        link: "/captain/services/laundry"
     },
     {
         title: "Meeting Room",
         image: "/services/meetingroom.png",
-        link: "/services/meetingroom"
+        link: "/captain/services/meetingroom"
     },
     {
         title: "Chat with hotel staff",
         image: "/services/call.jpg",
-        link: "/services/room"
+        link: "/captain/services/room"
     },
     {
         title: "Room Service",
         image: "/services/service.jpg",
-        link: "/services/service"
+        link: "/captain/services/service"
     },
     {
         title: "Sightseeing",
         image: "/services/sightseeing.jpg",
-        link: "/services/sightseeing"
+        link: "/captain/services/sightseeing"
     },
     {
         title: "Other Services like Spa, Gym, etc.",
         image: "/services/gym.png",
-        link: "/services/other"
+        link: "/captain/services/other"
     },
 ];
 
-function CaptainServiceCard({ title, image, link }: { title: string, image: string, link: string }) {
+function CaptainServiceCard({ title, image, link }: Readonly<{ title: string, image: string, link: string }>) {
     return (
         <div className='w-full h-full rounded-2xl flex flex-col overflow-hidden relative isolate'>
             <Image
@@ -85,7 +84,6 @@ function CaptainServiceCard({ title, image, link }: { title: string, image: stri
 export default function CaptainServicesSidebar() {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const toggleSidebar = useServicesSidebarNavigation(state => state.toggle);
-    const searchParams = useSearchParams();
 
     return (
         <section
@@ -112,10 +110,7 @@ export default function CaptainServicesSidebar() {
                             <Link
                                 key={index}
                                 href={{
-                                    pathname: service.link,
-                                    query: {
-                                        roomno: searchParams.get("roomno")
-                                    },
+                                    pathname: service.link
                                 }}
                             >
                                 <CaptainServiceCard
