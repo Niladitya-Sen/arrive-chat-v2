@@ -8,6 +8,7 @@ import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation'
 import { useCaptainRoomSidebar } from '@/store/CaptainRoomSidebar'
 import { Separator } from '@/components/ui/separator'
 import { usePathname } from 'next/navigation'
+import path from 'path'
 
 
 export default function CaptainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -17,18 +18,28 @@ export default function CaptainLayout({ children }: Readonly<{ children: React.R
 
     return (
         <section className='flex flex-col h-screen'>
-            <ChatHeader />
-            <div className={cn('grid grid-rows-[6rem_1fr] h-full sm:grid-cols-[8rem_2px_1fr] sm:grid-rows-[100%] text-black relative isolate bg-gradient-to-r from-[#eadec7] via-[#fcf8f0] to-[#eadec7]', {
-                'sm:grid-cols-[8rem_2px_1fr]': !isOpen,
-                'sm:grid-cols-[8rem_2px_160px_1fr]': !isOpen && isRoomOpen && pathname !== '/captain/profile',
-                'sm:grid-cols-[8rem_2px_300px_1fr]': isOpen,
-                'sm:grid-cols-[8rem_2px_300px_160px_1fr]': isRoomOpen && isOpen && pathname !== '/captain/profile',
-            })}>
-                <CaptainSidebarToggleButton />
-                <CaptainSidebar />
-                <Separator orientation='vertical' className={cn("w-[1.5px] bg-primary hidden sm:block")} />
-                {children}
-            </div>
+            {
+                pathname === "/captain" ? (
+                    <>
+                        {children}
+                    </>
+                ) : (
+                    <>
+                        <ChatHeader />
+                        <div className={cn('grid grid-rows-[6rem_1fr] h-full sm:grid-cols-[8rem_2px_1fr] sm:grid-rows-[100%] text-black relative isolate bg-gradient-to-r from-[#eadec7] via-[#fcf8f0] to-[#eadec7]', {
+                            'sm:grid-cols-[8rem_2px_1fr]': !isOpen,
+                            'sm:grid-cols-[8rem_2px_160px_1fr]': !isOpen && isRoomOpen && pathname !== '/captain/profile',
+                            'sm:grid-cols-[8rem_2px_300px_1fr]': isOpen,
+                            'sm:grid-cols-[8rem_2px_300px_160px_1fr]': isRoomOpen && isOpen && pathname !== '/captain/profile',
+                        })}>
+                            <CaptainSidebarToggleButton />
+                            <CaptainSidebar />
+                            <Separator orientation='vertical' className={cn("w-[1.5px] bg-primary hidden sm:block")} />
+                            {children}
+                        </div>
+                    </>
+                )
+            }
         </section>
     )
 }
