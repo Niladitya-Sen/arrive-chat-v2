@@ -89,7 +89,12 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
         e.preventDefault();
         const message = chatInputRef.current?.value;
         if (message) {
-            setMessages((prevMessages) => [...prevMessages, { message, role: 'sender' }]);
+            setMessages((prevMessages) => [...prevMessages, {
+                message, role: 'sender', time: new Date().toLocaleTimeString(
+                    'en-US',
+                    { hour: 'numeric', minute: 'numeric', hour12: true },
+                )
+            }]);
             if (message.toLowerCase() === "hello" || message.toLowerCase() === "hi" || message.toLowerCase() === "hey") {
                 setMessages((prevMessages) => [...prevMessages,
                 {
