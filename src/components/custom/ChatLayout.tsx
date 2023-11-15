@@ -1,27 +1,109 @@
 "use client";
 
 import Image from 'next/image';
-import React from 'react'
+import React, { useEffect } from 'react'
 import ChatBubble from './ChatBubble';
 import { MessageType } from '@/types/types';
 import { IoPaperPlaneOutline } from 'react-icons/io5';
+import socket from '@/socket/socket';
 
 export default function Chat({ isBot, isCaptainConnected, firstMessage, openModal }: Readonly<{ isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: string, openModal?: boolean }>) {
     const chatAreaRef = React.useRef<HTMLDivElement>(null);
     const chatInputRef = React.useRef<HTMLInputElement>(null);
-    const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [{ message: firstMessage, role: 'system' }] : []);
+    const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [{
+        message: firstMessage, role: 'system', time: new Date().toLocaleTimeString(
+            'en-US',
+            { hour: 'numeric', minute: 'numeric', hour12: true },
+        ),
+    }] : []);
 
-    React.useEffect(() => {
+    useEffect(() => {
+        if (isBot) {
+            socket.connect();
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                    message: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    ), role: 'system'
+                },
+                {
+                    message: 'Hi, I am Arrive Bot. How can I help you?',
+                    role: 'captain',
+                    time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                }
+            ]);
+        } else if (isCaptainConnected) {
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                    message: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    ), role: 'system'
+                },
+                {
+                    message: 'Hello Captain.',
+                    role: 'captain',
+                    time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                }
+            ]);
+        }
+    }, []);
+
+    useEffect(() => {
         if (chatAreaRef.current) {
             chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
         }
     }, [messages]);
 
+    useEffect(() => {
+        socket.on("bot_chat", (data) => {
+            let m: { message: string; role: "captain"; time: string }[] = [];
+            data.messages.forEach((msg: any) => {
+                m.push({
+                    message: msg,
+                    role: 'captain',
+                    time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                })
+            });
+            setMessages((prevMessages) => [...prevMessages, ...m]);
+        })
+
+        return () => {
+            socket.off("bot_chat");
+        }
+    })
+
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const message = chatInputRef.current?.value;
         if (message) {
-            setMessages((prevMessages) => [...prevMessages, { message, role: 'sender' }, { message: 'Hello', role: 'captain' }, { message: 'How are you?', role: 'system' }]);
+            setMessages((prevMessages) => [...prevMessages, { message, role: 'sender' }]);
+            if (message.toLowerCase() === "hello" || message.toLowerCase() === "hi" || message.toLowerCase() === "hey") {
+                setMessages((prevMessages) => [...prevMessages,
+                {
+                    message: 'Hello how can I help you?',
+                    role: 'captain',
+                    time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                }
+                ]);
+            } else {
+                socket.emit("bot_chat", { message });
+            }
             chatInputRef.current.value = '';
         }
     }

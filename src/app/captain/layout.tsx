@@ -8,16 +8,46 @@ import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation'
 import { useCaptainRoomSidebar } from '@/store/CaptainRoomSidebar'
 import { Separator } from '@/components/ui/separator'
 import { usePathname } from 'next/navigation'
-import path from 'path'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { CheckCircle, Loader2, AlertCircle } from 'lucide-react'
+import { useAlertStore } from '@/store/AlertStore'
 
 
 export default function CaptainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const isRoomOpen = useCaptainRoomSidebar(state => state.isOpen);
     const pathname = usePathname();
+    const { isAlertOpen, type, message } = useAlertStore(state => state);
+
+    let icon;
+    if (type === 'success') {
+        icon = <CheckCircle className='text-white w-6 h-6' color='green' />;
+    } else if (type === 'details') {
+        icon = <Loader2 className='text-white w-6 h-6 animate-spin' color='blue' />;
+    } else {
+        icon = <AlertCircle className='text-white w-6 h-6' color='red' />;
+    }
 
     return (
-        <section className='flex flex-col h-screen'>
+        <section className='flex flex-col h-screen relative isolate'>
+            <Alert className={cn('absolute top-5 left-5 w-fit bg-green-500 border-0 shadow-md transition-all -translate-x-96 opacity-0', {
+                "translate-x-0 opacity-100": isAlertOpen,
+                "bg-red-500": type === 'error',
+                "bg-blue-500": type === 'details',
+            })}>
+                {icon}
+                <AlertTitle className={cn("text-green-800", {
+                    "text-red-800": type === 'error',
+                    "text-blue-800": type === "details",
+                })}>{type.charAt(0).toUpperCase() + type.substring(1)}</AlertTitle>
+                <AlertDescription className={cn("text-green-900", {
+                    "text-red-900": type === 'error',
+                    "text-blue-900": type === "details",
+                })}>
+                    {message}
+                </AlertDescription>
+            </Alert>
+
             {
                 pathname === "/captain" ? (
                     <>

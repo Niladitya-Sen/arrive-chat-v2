@@ -11,15 +11,78 @@ import { CgClose } from 'react-icons/cg';
 import { HiMenuAlt2 } from 'react-icons/hi';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import { useCaptainRoomSidebar } from '@/store/CaptainRoomSidebar';
+import { IoPersonAdd } from 'react-icons/io5';
+import { Dialog, DialogContent } from '../ui/dialog';
+import { DialogClose, DialogTrigger } from '@radix-ui/react-dialog';
+import ChatHeader from './ChatHeader';
+import { Playfair_Display } from "next/font/google";
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useAlertStore } from '@/store/AlertStore';
+
+const playfair_Display = Playfair_Display({
+    weight: "400",
+    style: "normal",
+    subsets: ["latin-ext"],
+});
+
+type AddCustomerFormDataType = {
+    fname: string;
+    lname: string;
+    email: string;
+    phone_number: string;
+    arrival_date: string;
+    departure_date: string;
+    unique_id: string;
+}
+
+type AddCustomerResponseType = {
+    success: boolean;
+    message?: string;
+    error?: string;
+}
 
 export default function CaptainSidebar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const isOpen = useChatSidebarNavigation(state => state.isOpen);
-    const { isRoomOpen, toggleRoomSidebar } = useCaptainRoomSidebar(state => { return { isRoomOpen: state.isOpen, toggleRoomSidebar: state.toggle } });
+    const toggleRoomSidebar = useCaptainRoomSidebar(state => state.toggle);
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
     const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
     const router = useRouter();
+    const { openAlert, closeAlert } = useAlertStore(state => state);
+    const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        dialogCloseRef.current?.click();
+        openAlert('Adding customer...', 'details');
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const bodyContent: AddCustomerFormDataType = Object.fromEntries(formData.entries()) as AddCustomerFormDataType;
+        const response = await fetch('https://ae.arrive.waysdatalabs.com/api/customer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: bodyContent.fname + ' ' + bodyContent.lname,
+                ...bodyContent,
+            })
+        });
+        const data: AddCustomerResponseType = await response.json();
+        if (data.success) {
+            openAlert(data.message as string, 'success');
+            setTimeout(() => {
+                closeAlert();
+            }, 3000);
+        } else {
+            openAlert(data.error as string, 'error');
+            setTimeout(() => {
+                closeAlert();
+            }, 3000);
+        }
+    }
 
     return (
         <section
@@ -82,6 +145,94 @@ export default function CaptainSidebar() {
                 </svg>
                 <p className='text-sm text-primary'>Rooms</p>
             </button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <button className={`flex sm:flex-col gap-2 items-center text-primary text-sm`}>
+                        <IoPersonAdd className="text-2xl" />
+                        <p>Add Customer</p>
+                    </button>
+                </DialogTrigger>
+                <DialogContent className={cn('p-0 overflow-hidden max-w-2xl')}>
+                    <ChatHeader />
+                    <h1 className={`${playfair_Display.className} text-2xl text-center`}>Customer Details Form</h1>
+                    <form
+                        className='grid grid-cols-2 px-16 py-8 gap-4'
+                        onSubmit={handleSubmit}
+                    >
+                        <div className='w-full'>
+                            <label htmlFor="first_name" className='text-sm'>First Name</label>
+                            <Input
+                                required
+                                id='first_name'
+                                name="fname"
+                                className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
+                            />
+                        </div>
+                        <div className='w-full'>
+                            <label htmlFor="last_name" className='text-sm'>Last Name</label>
+                            <Input
+                                required
+                                name="lname"
+                                id='last_name'
+                                className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
+                            />
+                        </div>
+                        <div className='w-full'>
+                            <label htmlFor="email" className='text-sm'>Email ID</label>
+                            <Input
+                                required
+                                name="email"
+                                id='email'
+                                type='email'
+                                className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
+                            />
+                        </div>
+                        <div className='w-full'>
+                            <label htmlFor="phoneno" className='text-sm'>Mobile Number</label>
+                            <Input
+                                required
+                                name="phone_number"
+                                id='phoneno'
+                                pattern='[0-9]{10}'
+                                maxLength={10}
+                                minLength={10}
+                                className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
+                            />
+                        </div>
+                        <div className='w-full'>
+                            <label htmlFor="checkin" className='text-sm'>Check In</label>
+                            <Input
+                                required
+                                name="arrival_date"
+                                id='checkin'
+                                type='date'
+                                className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
+                            />
+                        </div>
+                        <div className='w-full'>
+                            <label htmlFor="checkout" className='text-sm'>Check Out</label>
+                            <Input
+                                required
+                                name="departure_date"
+                                id='checkout'
+                                type='date'
+                                className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
+                            />
+                        </div>
+                        <div className='w-full'>
+                            <label htmlFor="bookingid" className='text-sm'>Booking ID</label>
+                            <Input
+                                required
+                                name="unique_id"
+                                id='bookingid'
+                                className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
+                            />
+                        </div>
+                        <Button className={cn('col-span-2 w-fit place-self-center')} size="lg">Submit</Button>
+                    </form>
+                </DialogContent>
+                <DialogClose ref={dialogCloseRef} />
+            </Dialog>
         </section>
     )
 }
