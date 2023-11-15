@@ -117,7 +117,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
                 className='flex-grow flex flex-col gap-2 overflow-y-auto h-full scrollbar-none'
             >
                 {messages.map((message, index) => (
-                    <ChatBubble key={index} message={message.message} role={message.role} />
+                    <ChatBubble key={index} message={message.message} role={message.role} time={message.time} />
                 ))}
             </div>
             <form

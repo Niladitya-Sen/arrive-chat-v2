@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import type { MessageType } from '@/types/types'
 import React from 'react'
 
-export default function ChatBubble({ message, role }: { message: string, role: MessageType['role'] }) {
+export default function ChatBubble({ message, role, time }: Readonly<{ message: string, role: MessageType['role'], time?: string }>) {
     return (
         <div
             className={cn("flex flex-row items-center gap-2", {
@@ -25,7 +25,7 @@ export default function ChatBubble({ message, role }: { message: string, role: M
                         'text-white/80': role === 'sender',
                         'text-black/80': role === 'captain',
                     })}
-                >10:00 am</p>
+                >{time}</p>
             </div>
         </div>
     )
