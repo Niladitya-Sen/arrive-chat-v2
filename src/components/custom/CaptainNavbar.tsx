@@ -27,24 +27,23 @@ export default function CaptainNavbar() {
         const data = Object.fromEntries(formData.entries())
         console.log(data);
         //TODO: api call to login and add jwt token to cookies
+        const response = await fetch('https://ae.arrive.waysdatalabs.com/api/captain/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+        const result = await response.json();
+        console.log(result);
         localStorage.setItem('ac_ut', 'captain');
-        router.push('/chat');
+        router.push('/captain/chat');
     }
 
     return (
         <header>
             <nav className='text-white flex items-center justify-around'>
-                <Select>
-                    <SelectTrigger className={cn("w-[180px] hidden sm:flex")}>
-                        <SelectValue placeholder="Language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="english">English</SelectItem>
-                        <SelectItem value="french">French</SelectItem>
-                        <SelectItem value="german">German</SelectItem>
-                        <SelectItem value="spanish">Spanish</SelectItem>
-                    </SelectContent>
-                </Select>
+                <div className='w-[180px] invisible'></div>
                 <div className='flex flex-col items-center justify-center'>
                     <Image
                         src="/arrivechat.png"
@@ -90,6 +89,13 @@ export default function CaptainNavbar() {
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
                                 placeholder='Employee ID'
                             />
+                            <Input
+                                type='email'
+                                name='email'
+                                required
+                                className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
+                                placeholder='Email'
+                            />
                             <Select required name="language">
                                 <SelectTrigger className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}>
                                     <SelectValue placeholder="PREFERRED LANGUAGE" />
@@ -107,6 +113,7 @@ export default function CaptainNavbar() {
                                 required
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
                                 placeholder='Password'
+                                autoComplete='off'
                             />
                             <Button
                                 size={'lg'}

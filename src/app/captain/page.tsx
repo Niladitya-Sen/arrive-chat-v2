@@ -27,11 +27,6 @@ export default async function CaptainHome() {
                     <h1 className={`${playfairDisplay.className} text-7xl`}>each and every day!</h1>
                     <h2 className={`${playfairDisplay.className} text-xl mt-8`}>Get ready to be blown away by the revolutionary AI chatbot service of Arrive Chat!</h2>
                     <h2 className={`${playfairDisplay.className} text-xl mt-1`}>Are you geared up for the ride?</h2>
-                    <Input
-                        type='email'
-                        placeholder='Enter your email address'
-                        className={cn('bg-transparent rounded-none border-primary placeholder:text-primary w-[20rem] py-5 mt-[55px]')}
-                    />
                     <button className='mt-8'>
                         <EllipseButton />
                     </button>

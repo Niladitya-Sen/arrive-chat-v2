@@ -11,6 +11,7 @@ async function verifyToken(token: string) {
     if (data.success) {
         return true;
     }
+    return false;
 }
 
 export async function middleware(request: NextRequest) {
@@ -18,15 +19,17 @@ export async function middleware(request: NextRequest) {
     const token = searchParams.get('token');
     const language = searchParams.get('language');
 
+    console.log(await verifyToken(token as string));
+
     if (token && await verifyToken(token)) {
         const response = NextResponse.next();
         response.cookies.set('token', token);
         return response;
     }
 
-    /* if (!request.cookies.get('token') && request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.includes('captain')) {
+    if (!request.cookies.get('token') && request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.includes('captain')) {
         return NextResponse.redirect('https://ae.arrive.waysdatalabs.com/');
-    } */
+    }
 
     if (language) {
         const response = NextResponse.next();

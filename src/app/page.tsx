@@ -1,12 +1,12 @@
 import Navbar from '@/components/custom/Navbar'
 import React from 'react'
 import { Playfair_Display } from 'next/font/google'
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import EllipseButton from '@/components/custom/EllipseButton';
 import { BsStar } from 'react-icons/bs';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import LanguageBtn from '@/components/custom/LanguageBtn';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -27,11 +27,7 @@ export default async function Home() {
                     <h1 className={`${playfairDisplay.className} text-7xl`}>each and every day!</h1>
                     <h2 className={`${playfairDisplay.className} text-xl mt-8`}>Get ready to be blown away by the revolutionary AI chatbot service of Arrive Chat!</h2>
                     <h2 className={`${playfairDisplay.className} text-xl mt-1`}>Are you geared up for the ride?</h2>
-                    <Input
-                        type='email'
-                        placeholder='Enter your email address'
-                        className={cn('bg-transparent rounded-none border-primary placeholder:text-primary w-[20rem] py-5 mt-[55px]')}
-                    />
+                    <LanguageBtn />
                     <button className='mt-8'>
                         <EllipseButton />
                     </button>
