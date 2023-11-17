@@ -19,11 +19,14 @@ export async function middleware(request: NextRequest) {
     const token = searchParams.get('token');
     const language = searchParams.get('language');
 
-    console.log(await verifyToken(token as string));
-
     if (token && await verifyToken(token)) {
         const response = NextResponse.next();
-        response.cookies.set('token', token);
+        response.cookies.set('token', token, {
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            path: '/',
+            sameSite: 'lax', 
+            secure: true,
+        });
         return response;
     }
 
