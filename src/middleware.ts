@@ -8,6 +8,7 @@ async function verifyToken(token: string) {
         },
     });
     const data = await response.json();
+    console.log(data);
     if (data.success) {
         return true;
     }
@@ -30,13 +31,18 @@ export async function middleware(request: NextRequest) {
         return response;
     }
 
-    if (!request.cookies.get('token') && request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.includes('captain')) {
+    /* if (!request.cookies.get('token') && request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.includes('captain')) {
         return NextResponse.redirect('https://ae.arrive.waysdatalabs.com/');
-    }
+    } */
 
     if (language) {
         const response = NextResponse.next();
-        response.cookies.set('language', language);
+        response.cookies.set('language', language, {
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            path: '/',
+            sameSite: 'lax',
+            secure: true,
+        });
         return response;
     }
 

@@ -3,11 +3,10 @@
 import React from 'react'
 import { HiChevronDoubleLeft } from 'react-icons/hi'
 import { cn } from '@/lib/utils'
-import { Cookie, Playfair_Display } from 'next/font/google'
+import { Playfair_Display } from 'next/font/google'
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],

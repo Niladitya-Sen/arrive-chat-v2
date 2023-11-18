@@ -1,6 +1,5 @@
 import React from 'react';
 import { Playfair_Display } from 'next/font/google';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import EllipseButton from '@/components/custom/EllipseButton';
 import { BsStar } from 'react-icons/bs';

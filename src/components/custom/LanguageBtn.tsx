@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -10,13 +10,21 @@ import { useSearchParams } from 'next/navigation';
 
 export default function LanguageBtn() {
     const searchParams = useSearchParams();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         if (searchParams.get('token')) {
             setOpen(true);
         }
-    }, [searchParams.get('token')])
+    }, [searchParams.get('token')]);
+
+    function handleLanguageChange(value: string) {
+        if (value === 'arabic') {
+            document.querySelector('html')?.setAttribute('dir', 'rtl');
+        } else {
+            document.querySelector('html')?.setAttribute('dir', 'ltr');
+        }
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -36,12 +44,14 @@ export default function LanguageBtn() {
                     <h1>Please Choose Language</h1>
                 </DialogHeader>
                 <form action="/chat" className='flex flex-col items-center justify-center gap-4 mt-16'>
-                    <Select required name="language">
+                    <Select onValueChange={handleLanguageChange} required name="language">
                         <SelectTrigger className={cn("bg-transparent")}>
                             <SelectValue placeholder="Preferred Language" />
                         </SelectTrigger>
                         <SelectContent className={cn('bg-[#2f2f2f]')}>
                             <SelectItem value="english">English</SelectItem>
+                            <SelectItem value="arabic">Arabic</SelectItem>
+                            <SelectItem value="russian">Russian</SelectItem>
                             <SelectItem value="french">French</SelectItem>
                             <SelectItem value="german">German</SelectItem>
                             <SelectItem value="spanish">Spanish</SelectItem>
