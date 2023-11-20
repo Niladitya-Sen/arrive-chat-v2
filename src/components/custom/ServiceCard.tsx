@@ -1,16 +1,16 @@
 "use client";
 
+import { useCookies } from '@/hooks/useCookies';
 import Image from 'next/image'
-import { useSearchParams } from 'next/navigation';
 import React from 'react'
 
 export default function ServiceCard({ title, image, dialogRef }: Readonly<{
     title: string, image: string, dialogRef: React.RefObject<HTMLDialogElement>
 }>) {
-    const searchParams = useSearchParams();
+    const cookies = useCookies();
     return (
         <div role='button' className='w-full h-full rounded-2xl flex flex-col overflow-hidden' onClick={() => {
-            if (!searchParams.get("roomno")) {
+            if (!cookies.getCookie("roomno")) {
                 dialogRef.current?.showModal();
             }
         }}>

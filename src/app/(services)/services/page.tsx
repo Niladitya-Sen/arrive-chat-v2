@@ -3,6 +3,6 @@ import ChatLayout from '@/components/custom/ChatLayout'
 
 export default function Services() {
     return (
-        <ChatLayout />
+        <ChatLayout isCaptainConnected />
     )
 }

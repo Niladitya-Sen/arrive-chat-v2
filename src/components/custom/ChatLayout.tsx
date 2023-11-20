@@ -7,7 +7,7 @@ import { MessageType } from '@/types/types';
 import { IoPaperPlaneOutline } from 'react-icons/io5';
 import socket from '@/socket/socket';
 
-export default function Chat({ isBot, isCaptainConnected, firstMessage, openModal }: Readonly<{ isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: string, openModal?: boolean }>) {
+export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptain }: Readonly<{ isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: string, isCaptain?: boolean }>) {
     const chatAreaRef = React.useRef<HTMLDivElement>(null);
     const chatInputRef = React.useRef<HTMLInputElement>(null);
     const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [{
@@ -37,7 +37,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
                     )
                 }
             ]);
-        } else if (isCaptainConnected) {
+        } else if (isCaptain) {
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
@@ -55,6 +55,8 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
                     )
                 }
             ]);
+        } else if (isCaptainConnected) {
+            socket.connect();
         }
     }, []);
 
@@ -67,6 +69,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
     useEffect(() => {
         socket.on("bot_chat", (data) => {
             let m: { message: string; role: "captain"; time: string }[] = [];
+            console.log(data);
             data.messages.forEach((msg: any) => {
                 m.push({
                     message: msg,
@@ -78,11 +81,11 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
                 })
             });
             setMessages((prevMessages) => [...prevMessages, ...m]);
-        })
+        });
 
         return () => {
             socket.off("bot_chat");
-        }
+        };
     })
 
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
@@ -107,6 +110,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, openModa
                 }
                 ]);
             } else {
+                console.log("message", message);
                 socket.emit("bot_chat", { message });
             }
             chatInputRef.current.value = '';

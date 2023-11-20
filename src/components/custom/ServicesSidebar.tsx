@@ -8,10 +8,11 @@ import { HiChevronDoubleLeft } from 'react-icons/hi';
 import ServiceCard from './ServiceCard';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import { Playfair_Display } from 'next/font/google';
-import { } from '@/components/ui/dialog'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useCookies } from '@/hooks/useCookies';
+import socket from '@/socket/socket';
+import { services } from '@/lib/services';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -20,48 +21,7 @@ const playfairDisplay = Playfair_Display({
     display: 'swap',
 })
 
-const services = [
-    {
-        title: "Cab/Taxi Service",
-        image: "/services/cab.jpg",
-        link: "/services/cab"
-    },
-    {
-        title: "Restaurant & Cafe",
-        image: "/services/restaurants.jpg",
-        link: "/services/restaurants"
-    },
-    {
-        title: "Laundry Service",
-        image: "/services/laundry.jpg",
-        link: "/services/laundry"
-    },
-    {
-        title: "Meeting Room",
-        image: "/services/meetingroom.png",
-        link: "/services/meetingroom"
-    },
-    {
-        title: "Chat with hotel staff",
-        image: "/services/call.jpg",
-        link: "/services/room"
-    },
-    {
-        title: "Room Service",
-        image: "/services/service.jpg",
-        link: "/services/service"
-    },
-    {
-        title: "Sightseeing",
-        image: "/services/sightseeing.jpg",
-        link: "/services/sightseeing"
-    },
-    {
-        title: "Other Services like Spa, Gym, etc.",
-        image: "/services/gym.png",
-        link: "/services/other"
-    }
-];
+
 
 export default function ServicesSidebar() {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
@@ -88,6 +48,8 @@ export default function ServicesSidebar() {
         const result = await response.json();
         console.log(result);
         if (result.success) {
+            cookies.setCookie('roomno', data.roomno as string, 365, '/');
+            socket.emit('add-room-user', { roomno: data.roomno, service: "cab" });
             router.push("?roomno=" + data.roomno);
         }
     }

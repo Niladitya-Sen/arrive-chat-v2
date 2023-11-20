@@ -152,7 +152,7 @@ export default function CaptainSidebar() {
                         <p>Add Customer</p>
                     </button>
                 </DialogTrigger>
-                <DialogContent className={cn('p-0 overflow-hidden max-w-2xl')}>
+                <DialogContent className={cn('p-0 overflow-hidden max-w-2xl bg-[#2f2f2f]')}>
                     <ChatHeader />
                     <h1 className={`${playfair_Display.className} text-2xl text-center`}>Customer Details Form</h1>
                     <form

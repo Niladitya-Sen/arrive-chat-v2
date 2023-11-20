@@ -7,56 +7,14 @@ import { HiChevronDoubleLeft } from 'react-icons/hi';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import { Playfair_Display } from 'next/font/google';
 import Image from 'next/image';
+import { useServicesStore } from '@/store/CaptainStore';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
     style: ['normal', 'italic'],
     subsets: ['latin-ext'],
     display: 'swap',
-})
-
-const services = [
-    {
-        title: "Cab/Taxi Service",
-        image: "/services/cab.jpg",
-        link: "/captain/services/cab"
-    },
-    {
-        title: "Restaurant & Cafe",
-        image: "/services/restaurants.jpg",
-        link: "/captain/services/restaurants"
-    },
-    {
-        title: "Laundry Service",
-        image: "/services/laundry.jpg",
-        link: "/captain/services/laundry"
-    },
-    {
-        title: "Meeting Room",
-        image: "/services/meetingroom.png",
-        link: "/captain/services/meetingroom"
-    },
-    {
-        title: "Chat with hotel staff",
-        image: "/services/call.jpg",
-        link: "/captain/services/room"
-    },
-    {
-        title: "Room Service",
-        image: "/services/service.jpg",
-        link: "/captain/services/service"
-    },
-    {
-        title: "Sightseeing",
-        image: "/services/sightseeing.jpg",
-        link: "/captain/services/sightseeing"
-    },
-    {
-        title: "Other Services like Spa, Gym, etc.",
-        image: "/services/gym.png",
-        link: "/captain/services/other"
-    },
-];
+});
 
 function CaptainServiceCard({ title, image, link }: Readonly<{ title: string, image: string, link: string }>) {
     return (
@@ -84,6 +42,7 @@ function CaptainServiceCard({ title, image, link }: Readonly<{ title: string, im
 export default function CaptainServicesSidebar() {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const toggleSidebar = useServicesSidebarNavigation(state => state.toggle);
+    const services = useServicesStore(state => state.services);
 
     return (
         <section
@@ -110,7 +69,7 @@ export default function CaptainServicesSidebar() {
                             <Link
                                 key={index}
                                 href={{
-                                    pathname: service.link
+                                    pathname: service?.link
                                 }}
                             >
                                 <CaptainServiceCard
