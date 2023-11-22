@@ -9,7 +9,7 @@ export const services = [
         id: "restaurant",
         title: "Restaurant & Cafe",
         image: "/services/restaurants.jpg",
-        link: "/services/restaurants"
+        link: "/services/restaurant"
     },
     {
         id: "laundry",

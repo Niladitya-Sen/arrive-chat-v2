@@ -1,10 +1,12 @@
 import express from 'express';
-const app = express();
 import cors from 'cors';
 import { Server } from 'socket.io';
 import http from 'http';
 import sql from 'mssql';
 import 'dotenv/config';
+import gTTS from 'gtts';
+
+const app = express();
 
 app.use(express.json());
 app.use(cors());
@@ -65,17 +67,53 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on("delete-room", async ({ roomno }) => {
+        console.log(roomno);
+
+        try {
+            await sql.query`DELETE FROM services WHERE room = ${roomno}`;
+        } catch (err) {
+            console.log(err);
+        }
+    });
+
     socket.on("get-all-rooms-captain", async () => {
         const result = await sql.query("SELECT DISTINCT room FROM services");
         console.log(result.recordset)
 
         socket.emit("get-all-rooms-captain", {
             rooms: result.recordset
-        })
-    })
+        });
+    });
+
+    socket.on('join-room', ({ roomno }) => {
+        console.log(roomno);
+        socket.join(roomno);
+    });
+
+    socket.on("send-message", async ({ roomno, message, messagedBy }) => {
+        console.log(roomno, message, messagedBy);
+
+        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy) VALUES (${roomno}, ${message}, ${messagedBy})`;
+        socket.to(roomno).emit("receive-message", {
+            message,
+            messagedBy
+        });
+    });
 });
 
-app.get("/get-services-by-room/:roomno", async (req, res) => {
+app.get("/node-api/get-all-messages-by-room/:roomno", async (req, res) => {
+    const { roomno } = req.params;
+    const result = await sql.query`SELECT * FROM messages_ WHERE roomno = ${roomno}`;
+    console.log(result.recordset)
+
+    res.json({
+        success: true,
+        messages: result.recordset
+    });
+});
+
+app.get("/node-api/get-services-by-room/:roomno", async (req, res) => {
     const { roomno } = req.params;
 
     try {
@@ -89,6 +127,41 @@ app.get("/get-services-by-room/:roomno", async (req, res) => {
     } catch (err) {
         console.log(err);
     }
+});
+
+app.get("/node-api/get-rooms-by-service/:service", async (req, res) => {
+    const { service } = req.params;
+
+    try {
+        const result = await sql.query`SELECT room FROM services WHERE service = ${service}`;
+        console.log(result.recordset);
+
+        res.json({
+            success: true,
+            rooms: result.recordset
+        });
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.get("/node-api/get-speech/:message", (req, res) => {
+    const { message } = req.params;
+    const { language } = req.query;
+
+    const lang = {
+        english: 'en',
+        arabic: 'ar',
+        russian: 'ru',
+        french: 'fr',
+        german: 'de',
+        italian: 'it',
+        spanish: 'es'
+    };
+
+    const gtts = new gTTS(message, lang[language] ?? 'en');
+    res.setHeader('Content-Type', 'audio/mpeg');
+    gtts.stream().pipe(res);
 });
 
 server.listen(PORT, async () => {

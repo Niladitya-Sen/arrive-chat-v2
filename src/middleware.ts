@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
 async function verifyToken(token: string) {
-    const response = await fetch(`https://ae.arrive.waysdatalabs.com/api/auth/verify-token?token=${token}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    });
-    const data = await response.json();
-    if (data.success) {
-        return true;
+    try {
+        const response = await fetch(`https://ae.arrive.waysdatalabs.com/api/auth/verify-token?token=${token}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (err) {
+        console.log(err);
     }
-    return false;
 }
 
 export async function middleware(request: NextRequest) {
@@ -20,11 +22,24 @@ export async function middleware(request: NextRequest) {
     const language = searchParams.get('language');
 
     console.log(await verifyToken(token as string));
+    const creds = await verifyToken(token as string);
 
-    if (token && await verifyToken(token)) {
+    if (token && creds.success) {
         const response = NextResponse.next();
         response.cookies.set('token', token, {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            path: '/',
+            sameSite: 'lax',
+            secure: true,
+        });
+        response.cookies.set('language', creds.language, {
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            path: '/',
+            sameSite: 'lax',
+            secure: true,
+        });
+        response.cookies.set('roomno', creds.roomno, {
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,
@@ -36,10 +51,14 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect('https://ae.arrive.waysdatalabs.com/');
     } */
 
+    /* if (!request.cookies.get('ac_token') && request.nextUrl.pathname.includes('captain') && request.nextUrl.pathname !== "/captain") {
+        return NextResponse.redirect('https://ae.arrive.waysdatalabs.com/captain');
+    } */
+
     if (language) {
         const response = NextResponse.next();
         response.cookies.set('language', language, {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,

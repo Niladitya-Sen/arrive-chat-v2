@@ -3,19 +3,25 @@
 import Image from 'next/image';
 import React, { useEffect } from 'react'
 import ChatBubble from './ChatBubble';
-import { MessageType } from '@/types/types';
 import { IoPaperPlaneOutline } from 'react-icons/io5';
 import socket from '@/socket/socket';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useCookies } from '@/hooks/useCookies';
 
-export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptain }: Readonly<{ isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: string, isCaptain?: boolean }>) {
+type MessageType = {
+    message: string;
+    role: 'sender' | 'captain' | 'system' | 'bot';
+    time?: string;
+    type?: 'choice';
+}
+
+export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptain }: Readonly<{ isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: MessageType, isCaptain?: boolean }>) {
     const chatAreaRef = React.useRef<HTMLDivElement>(null);
     const chatInputRef = React.useRef<HTMLInputElement>(null);
-    const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [{
-        message: firstMessage, role: 'system', time: new Date().toLocaleTimeString(
-            'en-US',
-            { hour: 'numeric', minute: 'numeric', hour12: true },
-        ),
-    }] : []);
+    const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [firstMessage] : []);
+    const searchParams = useSearchParams();
+    const cookies = useCookies();
+    const pathname = usePathname();
 
     useEffect(() => {
         if (isBot) {
@@ -38,6 +44,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 }
             ]);
         } else if (isCaptain) {
+            socket.connect();
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
@@ -86,7 +93,58 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
         return () => {
             socket.off("bot_chat");
         };
-    })
+    });
+
+    useEffect(() => {
+        socket.on("receive-message", ({ message }: { message: string }) => {
+            setMessages((prevMessages) => [...prevMessages, {
+                message, role: 'captain', time: new Date().toLocaleTimeString(
+                    'en-US',
+                    { hour: 'numeric', minute: 'numeric', hour12: true },
+                )
+            }]);
+        });
+
+        return () => {
+            socket.off("receive-message");
+        };
+    });
+
+    useEffect(() => {
+        async function getAllChatsByRoom(roomno: string | null) {
+            const response = await fetch(`http://localhost:3013/node-api/get-all-messages-by-room/${roomno}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                cache: 'no-store'
+            });
+            const result = await response.json();
+            console.log(result);
+            if (result.success) {
+                let messages: MessageType[] = [];
+                for (const element of result.messages) {
+                    messages.push({
+                        message: element.message,
+                        role: element.messagedBy === localStorage.getItem('ac_ut') ? 'sender' : 'captain',
+                        time: new Date().toLocaleTimeString(
+                            'en-US',
+                            { hour: 'numeric', minute: 'numeric', hour12: true },
+                        )
+                    });
+                }
+                if (messages.length !== 0) {
+                    setMessages([...messages]);
+                }
+            }
+        }
+        if (localStorage.getItem('ac_ut') === 'captain' && searchParams.get("rno")) {
+            getAllChatsByRoom(searchParams.get("rno"));
+        } else if (cookies.getCookie('roomno') && !localStorage.getItem('ac_ut')) {
+            getAllChatsByRoom(cookies.getCookie('roomno') ?? "");
+            console.log(cookies.getCookie('roomno'));
+        }
+    }, [searchParams.get("rno")]);
 
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -98,7 +156,14 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     { hour: 'numeric', minute: 'numeric', hour12: true },
                 )
             }]);
-            if (message.toLowerCase() === "hello" || message.toLowerCase() === "hi" || message.toLowerCase() === "hey") {
+
+            if (isCaptain || isCaptainConnected) {
+                socket.emit("send-message", {
+                    roomno: searchParams.get('rno') ?? cookies.getCookie('roomno'),
+                    message,
+                    messagedBy: isCaptainConnected ? 'customer' : 'captain'
+                });
+            } else if (message.toLowerCase() === "hello" || message.toLowerCase() === "hi" || message.toLowerCase() === "hey") {
                 setMessages((prevMessages) => [...prevMessages,
                 {
                     message: 'Hello how can I help you?',
@@ -109,7 +174,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     )
                 }
                 ]);
-            } else {
+            } else if (!isCaptain) {
                 console.log("message", message);
                 socket.emit("bot_chat", { message });
             }
@@ -126,7 +191,13 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 className='flex-grow flex flex-col gap-2 overflow-y-auto h-full scrollbar-none'
             >
                 {messages.map((message, index) => (
-                    <ChatBubble key={index} message={message.message} role={message.role} time={message.time} />
+                    <ChatBubble
+                        key={index}
+                        message={message.message}
+                        role={message.role === "bot" ? "captain" : message.role}
+                        time={message.time}
+                        type={message.type}
+                    />
                 ))}
             </div>
             <form

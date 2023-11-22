@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" dir='ltr'>
-      <body className={`${inter.className} max-w-screen-2xl mx-auto max-h-screen`}>
+      <body className={`${inter.className} max-w-screen-2xl mx-auto`}>
         <CheckDir />
         {children}
       </body>

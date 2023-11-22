@@ -69,7 +69,7 @@ export default function CaptainServicesSidebar() {
                             <Link
                                 key={index}
                                 href={{
-                                    pathname: service?.link
+                                    pathname: "/captain" + service?.link
                                 }}
                             >
                                 <CaptainServiceCard

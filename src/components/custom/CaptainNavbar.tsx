@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { Input } from '../ui/input'
 import { Playfair_Display } from 'next/font/google'
 import { useRouter } from 'next/navigation';
+import { useCookies } from '@/hooks/useCookies';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400'],
@@ -20,6 +21,7 @@ const playfairDisplay = Playfair_Display({
 
 export default function CaptainNavbar() {
     const router = useRouter();
+    const cookies = useCookies();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -35,9 +37,11 @@ export default function CaptainNavbar() {
             body: JSON.stringify(data),
         });
         const result = await response.json();
-        console.log(result);
-        localStorage.setItem('ac_ut', 'captain');
-        router.push('/captain/chat');
+        if (result.success) {
+            cookies.setCookie('ac_token', result.token, 365, '/captain');
+            localStorage.setItem('ac_ut', 'captain');
+            router.push('/captain/chat');
+        }
     }
 
     return (
@@ -84,7 +88,7 @@ export default function CaptainNavbar() {
                             />
                             <Input
                                 type='text'
-                                name='employeeId'
+                                name='employee_id'
                                 required
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
                                 placeholder='Employee ID'

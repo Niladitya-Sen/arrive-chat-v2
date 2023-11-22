@@ -15,6 +15,12 @@ type ServicesStoreType = {
     resetServices: () => void;
 };
 
+type RoomStoreType = {
+    rooms: string[];
+    setRooms: (newRooms: string[]) => void;
+    resetRooms: () => void;
+};
+
 export const useServicesStore = create<ServicesStoreType>((set) => ({
     services: data,
     setServices: (services) => set(
@@ -28,6 +34,20 @@ export const useServicesStore = create<ServicesStoreType>((set) => ({
     resetServices: () => set(
         produce<ServicesStoreType>((state) => {
             state.services = data;
+        })
+    ),
+}));
+
+export const useRoomStore = create<RoomStoreType>((set) => ({
+    rooms: [],
+    setRooms: (newRooms) => set(
+        produce<RoomStoreType>((state) => {
+            state.rooms = newRooms;
+        })
+    ),
+    resetRooms: () => set(
+        produce<RoomStoreType>((state) => {
+            state.rooms = [];
         })
     ),
 }));

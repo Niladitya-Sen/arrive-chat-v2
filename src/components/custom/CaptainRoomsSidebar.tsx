@@ -6,28 +6,37 @@ import React, { useEffect } from 'react'
 import { buttonVariants } from '../ui/button';
 import Link from 'next/link';
 import socket from '@/socket/socket';
-import { useServicesStore } from '@/store/CaptainStore';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { IoClose } from "react-icons/io5";
+import { useRoomStore } from '@/store/CaptainStore';
+import { MdDelete } from "react-icons/md";
 
 
 export default function CaptainRoomsSidebar() {
     const isRoomOpen = useCaptainRoomSidebar(state => state.isOpen);
-    const [roomnumbers, setRoomnumbers] = React.useState<string[]>([]);
+    //const [roomnumbers, setRoomnumbers] = React.useState<string[]>([]);
+    const searchParams = useSearchParams();
+    const { rooms, setRooms } = useRoomStore(state => state);
+    const pathname = usePathname();
 
     useEffect(() => {
         socket.connect();
     }, []);
 
     useEffect(() => {
-        socket.emit('get-all-rooms-captain');
-    }, []);
+        if (pathname === '/captain/chat') {
+            socket.emit('get-all-rooms-captain');
+        }
+    }, [pathname]);
 
     useEffect(() => {
         socket.on("get-all-rooms-captain", ({ rooms }: { rooms: { room: string }[] }) => {
             let roomnos: string[] = [];
-            for (let i = 0; i < rooms.length; i++) {
-                roomnos.push(rooms[i].room);
+            for (const element of rooms) {
+                roomnos.push(element.room);
             }
-            setRoomnumbers([...roomnos]);
+            //setRoomnumbers([...roomnos]);
+            setRooms([...roomnos]);
         });
 
         return () => {
@@ -38,7 +47,8 @@ export default function CaptainRoomsSidebar() {
     useEffect(() => {
         socket.on('add-room-captain', ({ roomno }: { roomno: string }) => {
             console.log("first");
-            setRoomnumbers(prev => [...prev, roomno]);
+            //setRoomnumbers(prev => [...prev, roomno]);
+            setRooms([...rooms, roomno]);
         });
 
         return () => {
@@ -52,20 +62,50 @@ export default function CaptainRoomsSidebar() {
             'flex': isRoomOpen
         })}>
             <p className='pb-4 pt-6 text-center'>Room Numbers</p>
-            {roomnumbers.map((roomnumber, index) => (
-                <Link
-                    href={{
-                        pathname: '/captain/chat',
-                        query: {
-                            rno: roomnumber
-                        }
-                    }}
-                    key={index}
-                    className={cn(buttonVariants({
-                        className: 'self-stretch rounded-none mx-1'
-                    }))}
-                >{roomnumber}</Link>
-            ))}
+            {
+                rooms.map((roomnumber, index) => (
+                    <div
+                        key={index}
+                        className={cn(buttonVariants({
+                            className: 'self-stretch rounded-none mx-1'
+                        }), {
+                            'bg-white hover:bg-white border-2 border-primary flex': searchParams.get('rno') === roomnumber,
+                        })}
+                    >
+                        <div className='flex-grow'></div>
+                        <Link
+                            href={{
+                                pathname: '/captain/chat',
+                                query: {
+                                    rno: roomnumber
+                                }
+                            }}
+                            className='w-full h-full flex items-center justify-center'
+                        >{roomnumber}</Link>
+                        <div className='flex-grow'></div>
+                        <Link
+                            href={"/captain/chat"}
+                            className={cn('hover:bg-black/20 p-1 rounded-full transition-colors', {
+                                'hidden': searchParams.get('rno') !== roomnumber,
+                            })}
+                        >
+                            <IoClose />
+                        </Link>
+                        <button
+                            className={cn('hover:bg-red-500 p-1 rounded-md bg-red-400 text-white transition-colors', {
+                                'hidden': searchParams.get('rno') === roomnumber,
+                            })}
+                            onClick={() => {
+                                socket.emit('delete-room', { roomno: roomnumber });
+                                //setRoomnumbers(prev => prev.filter((room) => room !== roomnumber));
+                                setRooms(rooms.filter((room) => room !== roomnumber));
+                            }}
+                        >
+                            <MdDelete />
+                        </button>
+                    </div>
+                ))
+            }
         </section>
     )
 }

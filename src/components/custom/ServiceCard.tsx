@@ -9,7 +9,7 @@ export default function ServiceCard({ title, image, dialogRef }: Readonly<{
 }>) {
     const cookies = useCookies();
     return (
-        <div role='button' className='w-full h-full rounded-2xl flex flex-col overflow-hidden' onClick={() => {
+        <div className='w-full h-full rounded-2xl flex flex-col overflow-hidden' onClick={() => {
             if (!cookies.getCookie("roomno")) {
                 dialogRef.current?.showModal();
             }
@@ -22,7 +22,7 @@ export default function ServiceCard({ title, image, dialogRef }: Readonly<{
                 placeholder='empty'
                 width={200}
                 height={200}
-                className='object-cover flex-grow'
+                className='object-cover flex-grow w-full'
             />
             <div className='bg-[#b3a385] p-2 h-full text-center'>
                 <p className='text-xs text-white font-semibold uppercase'>{title}</p>

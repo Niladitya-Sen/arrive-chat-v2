@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import ChatLayout from '@/components/custom/ChatLayout';
 import { useServicesStore } from '@/store/CaptainStore';
 import { useSearchParams } from 'next/navigation';
+import socket from '@/socket/socket';
 
 export default function Chat() {
     const { setServices, resetServices } = useServicesStore(state => state);
@@ -11,7 +12,7 @@ export default function Chat() {
 
     useEffect(() => {
         async function fetchServices() {
-            const response = await fetch(`http://localhost:3013/get-services-by-room/${searchParams.get('rno')}`, {
+            const response = await fetch(`http://localhost:3013/node-api/get-services-by-room/${searchParams.get('rno')}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -21,15 +22,18 @@ export default function Chat() {
             const result = await response.json();
             if (result.success) {
                 let services: string[] = [];
-                for (let i = 0; i < result.services.length; i++) {
-                    services.push(result.services[i].service);
+                for (const element of result.services) {
+                    services.push(element.service);
                 }
-                //resetServices();
                 setServices([...services]);
             }
         }
         if (searchParams.get('rno')) {
+            socket.connect();
+            socket.emit('join-room', { roomno: searchParams.get('rno') });
             fetchServices();
+        } else {
+            resetServices();
         }
     }, [searchParams.get('rno')])
 
