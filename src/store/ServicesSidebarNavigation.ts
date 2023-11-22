@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from 'zustand';
 
 type ServicesSidebarNavigationState = {
@@ -7,7 +9,7 @@ type ServicesSidebarNavigationState = {
 
 export const useServicesSidebarNavigation = create<ServicesSidebarNavigationState>(
     (set) => ({
-        isOpen: true,
+        isOpen: false,
         toggle: () => set((state) => ({ isOpen: !state.isOpen })),
     })
 );

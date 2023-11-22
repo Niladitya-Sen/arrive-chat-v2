@@ -184,7 +184,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     return (
         <section
-            className='relative isolate max-w-4xl w-full mx-auto mt-4 p-2 flex flex-col'
+            className='relative isolate max-w-4xl w-full h-full mx-auto mt-4 p-2 flex flex-col'
         >
             <div
                 ref={chatAreaRef}

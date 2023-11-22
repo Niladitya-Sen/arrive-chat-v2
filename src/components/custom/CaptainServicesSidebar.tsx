@@ -27,7 +27,7 @@ function CaptainServiceCard({ title, image, link }: Readonly<{ title: string, im
                 placeholder='empty'
                 width={200}
                 height={200}
-                className='object-cover flex-grow'
+                className='object-cover flex-grow w-full'
             />
             <div className='bg-[#b3a385] p-2 h-full text-center'>
                 <p className='text-xs text-white font-semibold uppercase'>{title}</p>

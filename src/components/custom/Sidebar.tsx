@@ -67,7 +67,8 @@ export default function Sidebar({ children, hiddenBtns }: Readonly<{ children?: 
                         toggleSidebar();
                         toggleServicesSidebar();
                     } else {
-                        router.push(`/services?language=${searchParams.get('language')}`)
+                        router.push(`/services`);
+                        toggleServicesSidebar();
                     }
                 }}
                 className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`, {

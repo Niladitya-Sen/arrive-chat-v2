@@ -10,10 +10,12 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { IoClose } from "react-icons/io5";
 import { useRoomStore } from '@/store/CaptainStore';
 import { MdDelete } from "react-icons/md";
+import { HiChevronDoubleLeft } from 'react-icons/hi2';
 
 
 export default function CaptainRoomsSidebar() {
     const isRoomOpen = useCaptainRoomSidebar(state => state.isOpen);
+    const toggleRoomBar = useCaptainRoomSidebar(state => state.toggle);
     //const [roomnumbers, setRoomnumbers] = React.useState<string[]>([]);
     const searchParams = useSearchParams();
     const { rooms, setRooms } = useRoomStore(state => state);
@@ -57,11 +59,19 @@ export default function CaptainRoomsSidebar() {
     });
 
     return (
-        <section className={cn('border-0 border-r-2 border-primary flex-col gap-2 items-center w-full h-full overflow-y-auto scrollbar-none', {
+        <section className={cn('border-0 border-r-2 border-primary flex-col gap-2 items-center sm:w-full h-full overflow-y-auto scrollbar-none absolute z-[60] sm:relative w-[50%] bg-white sm:bg-transparent', {
             'hidden': !isRoomOpen,
             'flex': isRoomOpen
         })}>
-            <p className='pb-4 pt-6 text-center'>Room Numbers</p>
+            <div className="w-full flex items-center justify-between sm:justify-center px-2">
+                <p className='pb-4 pt-6 text-center'>Room Numbers</p>
+                <button
+                    className='text-2xl static sm:hidden'
+                    onClick={toggleRoomBar}
+                >
+                    <HiChevronDoubleLeft />
+                </button>
+            </div>
             {
                 rooms.map((roomnumber, index) => (
                     <div

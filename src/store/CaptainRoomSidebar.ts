@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from 'zustand';
 
 type CaptainRoomSidebarState = {
@@ -7,7 +9,7 @@ type CaptainRoomSidebarState = {
 
 export const useCaptainRoomSidebar = create<CaptainRoomSidebarState>(
     (set) => ({
-        isOpen: true,
+        isOpen: false,
         toggle: () => set((state) => ({ isOpen: !state.isOpen })),
     })
 );
