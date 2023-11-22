@@ -10,7 +10,7 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
     const audioRef = useRef<HTMLAudioElement>(null);
 
     useEffect(() => {
-        setAudioSrc(`http://localhost:3013/node-api/get-speech/${message}?language=${cookies.getCookie('language')}`);
+        setAudioSrc(`https://ae.arrive.waysdatalabs.com/node-api/get-speech/${message}?language=${cookies.getCookie('language')}`);
     }, [message]);
 
     return (

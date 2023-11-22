@@ -112,7 +112,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         async function getAllChatsByRoom(roomno: string | null) {
-            const response = await fetch(`http://localhost:3013/node-api/get-all-messages-by-room/${roomno}`, {
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-all-messages-by-room/${roomno}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

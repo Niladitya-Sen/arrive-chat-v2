@@ -1,9 +1,11 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3013", {
+const socket = io("https://ae.arrive.waysdatalabs.com", {
     autoConnect: false
 });
 
 export default socket;
 
-// https://arrivechat.waysdatalabs.com
+// https://ae.arrive.waysdatalabs.com
+
+// https://ae.arrive.waysdatalabs.com

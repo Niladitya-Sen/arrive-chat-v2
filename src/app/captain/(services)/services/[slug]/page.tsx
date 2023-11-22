@@ -9,7 +9,7 @@ export default function Service({ params }: Readonly<{ params: { slug: string } 
 
     useEffect(() => {
         async function fetchRooms() {
-            const response = await fetch(`http://localhost:3013/node-api/get-rooms-by-service/${params.slug}`, {
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-rooms-by-service/${params.slug}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
