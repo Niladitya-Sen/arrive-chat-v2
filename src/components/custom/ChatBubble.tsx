@@ -58,9 +58,15 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                         'text-black/80': role === 'captain',
                     })}
                 >
-                    <AiTwotoneSound onClick={() => {
-                        audioRef.current?.play();
-                    }} />
+                    <AiTwotoneSound
+                        className={`${role === 'sender' && 'hidden'}`}
+                        onClick={() => {
+                            if (audioRef.current) {
+                                audioRef.current.playbackRate = 1.5;
+                                audioRef.current.play();
+                            }
+                        }}
+                    />
                     <p>{time}</p>
                 </div>
             </div>
