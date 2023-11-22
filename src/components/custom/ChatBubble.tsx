@@ -62,7 +62,7 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                         className={`${role === 'sender' && 'hidden'}`}
                         onClick={() => {
                             if (audioRef.current) {
-                                audioRef.current.playbackRate = 1.5;
+                                audioRef.current.playbackRate = 1.25;
                                 audioRef.current.play();
                             }
                         }}
