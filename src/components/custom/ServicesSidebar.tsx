@@ -4,7 +4,6 @@ import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { HiChevronDoubleLeft } from 'react-icons/hi';
 import ServiceCard from './ServiceCard';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import { Playfair_Display } from 'next/font/google';
@@ -14,17 +13,16 @@ import { useCookies } from '@/hooks/useCookies';
 import socket from '@/socket/socket';
 import { services } from '@/lib/services';
 import { getDictionary } from '@/app/[lang]/dictionaries';
+import { HiChevronDoubleRight, HiChevronDoubleLeft } from 'react-icons/hi2';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
     style: ['normal', 'italic'],
     subsets: ['latin-ext'],
     display: 'swap',
-})
+});
 
-
-
-export default function ServicesSidebar({ lang }: { lang: string }) {
+export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const toggleSidebar = useServicesSidebarNavigation(state => state.toggle);
     const searchParams = useSearchParams();
@@ -88,9 +86,10 @@ export default function ServicesSidebar({ lang }: { lang: string }) {
                 </form>
             </dialog>
             <section
-                className={cn('flex-col sm:items-center p-6 gap-6 transition-all duration-300 border-r-2 border-r-primary', {
+                className={cn('flex-col sm:items-center p-6 gap-6 transition-all duration-300 border-r-2 border-primary', {
                     'flex': isOpen,
-                    'hidden': !isOpen
+                    'hidden': !isOpen,
+                    'border-r-0 border-l-2': lang === 'ar',
                 })}
             >
                 <div className='flex flex-row justify-between items-center w-full'>
@@ -99,7 +98,9 @@ export default function ServicesSidebar({ lang }: { lang: string }) {
                         className='text-2xl self-end'
                         onClick={toggleSidebar}
                     >
-                        <HiChevronDoubleLeft />
+                        {
+                            lang === 'ar' ? <HiChevronDoubleRight /> : <HiChevronDoubleLeft />
+                        }
                     </button>
                 </div>
                 <div
