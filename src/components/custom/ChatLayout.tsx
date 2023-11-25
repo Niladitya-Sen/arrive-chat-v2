@@ -21,7 +21,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [firstMessage] : []);
     const searchParams = useSearchParams();
     const cookies = useCookies();
-    const pathname = usePathname();
 
     useEffect(() => {
         if (isBot) {

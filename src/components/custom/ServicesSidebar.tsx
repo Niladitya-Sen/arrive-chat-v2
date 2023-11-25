@@ -110,7 +110,7 @@ export default function ServicesSidebar({ lang }: { lang: string }) {
                             <Link
                                 key={index}
                                 href={{
-                                    pathname: service.link,
+                                    pathname: `/${lang}/${service.link}`,
                                     query: {
                                         roomno: searchParams.get("roomno")
                                     },

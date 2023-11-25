@@ -32,8 +32,8 @@ async function verifyToken(token: string) {
 export async function middleware(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const token = searchParams.get('token');
-    const language = searchParams.get('language');
-    console.log(await verifyToken(token as string));
+    const lang = request.nextUrl.pathname.split('/')[1];
+    console.log(await verifyToken(token as string), lang);
     const creds = await verifyToken(token as string);
     const { pathname } = request.nextUrl;
 
@@ -72,9 +72,9 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect('https://ae.arrive.waysdatalabs.com/captain');
     } */
 
-    if (language) {
+    if (lang) {
         const response = NextResponse.next();
-        response.cookies.set('language', language, {
+        response.cookies.set('language', lang, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',

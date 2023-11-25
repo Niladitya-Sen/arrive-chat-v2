@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '../ui/button'
@@ -24,6 +24,7 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
     const cookies = useCookies();
     const { login, name, preferred, employee, password, email, dialogH1 } = dict.captain;
     const params = useParams();
+    const [lang, setLang] = useState(params.lang as string);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -42,7 +43,7 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
         if (result.success) {
             cookies.setCookie('ac_token', result.token, 365, '/captain');
             localStorage.setItem('ac_ut', 'captain');
-            router.push('/captain/chat');
+            router.push(`/${lang}/captain/chat`);
         }
     }
 
@@ -102,17 +103,23 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
                                 placeholder={email}
                             />
-                            <Select dir={params.lang === "ar" ? "rtl" : "ltr"} required name="language">
+                            <Select
+                                value={lang}
+                                onValueChange={setLang}
+                                dir={params.lang === "ar" ? "rtl" : "ltr"}
+                                required
+                                name="language"
+                            >
                                 <SelectTrigger className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}>
                                     <SelectValue placeholder={preferred} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="english">English</SelectItem>
-                                    <SelectItem value="arabic">Arabic</SelectItem>
-                                    <SelectItem value="russian">Russian</SelectItem>
-                                    <SelectItem value="french">French</SelectItem>
-                                    <SelectItem value="german">German</SelectItem>
-                                    <SelectItem value="spanish">Spanish</SelectItem>
+                                    <SelectItem value="en">English</SelectItem>
+                                    <SelectItem value="ar">Arabic</SelectItem>
+                                    <SelectItem value="ru">Russian</SelectItem>
+                                    <SelectItem value="fr">French</SelectItem>
+                                    <SelectItem value="de">German</SelectItem>
+                                    <SelectItem value="es">Spanish</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Input

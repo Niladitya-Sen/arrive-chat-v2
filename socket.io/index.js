@@ -149,19 +149,18 @@ app.get("/node-api/get-speech/:message", (req, res) => {
     const { message } = req.params;
     const { language } = req.query;
 
-    const lang = {
-        english: 'en',
-        arabic: 'ar',
-        russian: 'ru',
-        french: 'fr',
-        german: 'de',
-        italian: 'it',
-        spanish: 'es'
-    };
+    const langs = ['en', 'fr', 'ar', 'es', 'de', 'ru']
 
-    const gtts = new gTTS(message, lang[language] ?? 'en');
-    res.setHeader('Content-Type', 'audio/mpeg');
-    gtts.stream().pipe(res);
+    if (langs.includes(language)) {
+        const gtts = new gTTS(message, language ?? 'en');
+        res.setHeader('Content-Type', 'audio/mpeg');
+        gtts.stream().pipe(res);
+    } else {
+        res.json({
+            success: false,
+            message: "Language not supported"
+        });
+    }
 });
 
 server.listen(PORT, async () => {

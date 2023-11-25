@@ -36,7 +36,7 @@ export default function CaptainRoomsSidebar() {
     }, []);
 
     useEffect(() => {
-        if (pathname === '/captain/chat') {
+        if (pathname === `/${params.lang}/captain/chat`) {
             socket.emit('get-all-rooms-captain');
         }
     }, [pathname]);
@@ -96,7 +96,7 @@ export default function CaptainRoomsSidebar() {
                         <div className='flex-grow'></div>
                         <Link
                             href={{
-                                pathname: '/captain/chat',
+                                pathname: `/${params.lang}/captain/chat`,
                                 query: {
                                     rno: roomnumber
                                 }
@@ -105,7 +105,7 @@ export default function CaptainRoomsSidebar() {
                         >{roomnumber}</Link>
                         <div className='flex-grow'></div>
                         <Link
-                            href={"/captain/chat"}
+                            href={`/${params.lang}/captain/chat`}
                             className={cn('hover:bg-black/20 p-1 rounded-full transition-colors', {
                                 'hidden': searchParams.get('rno') !== roomnumber,
                             })}

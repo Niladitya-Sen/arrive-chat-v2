@@ -8,9 +8,10 @@ import { LanguagesIcon } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 
-export default function LanguageBtn({ title }: { title: string }) {
+export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
     const searchParams = useSearchParams();
     const [open, setOpen] = useState(false);
+    const [language, setLanguage] = useState('en');
 
     useEffect(() => {
         if (searchParams.get('token')) {
@@ -19,7 +20,8 @@ export default function LanguageBtn({ title }: { title: string }) {
     }, [searchParams.get('token')]);
 
     function handleLanguageChange(value: string) {
-        if (value === 'arabic') {
+        setLanguage(value);
+        if (value === 'ar') {
             document.querySelector('html')?.setAttribute('dir', 'rtl');
         } else {
             document.querySelector('html')?.setAttribute('dir', 'ltr');
@@ -43,18 +45,18 @@ export default function LanguageBtn({ title }: { title: string }) {
                 <DialogHeader className={cn("flex flex-row items-center justify-center text-xl font-semibold")}>
                     <h1>Please Choose Language</h1>
                 </DialogHeader>
-                <form action="/chat" className='flex flex-col items-center justify-center gap-4 mt-16'>
-                    <Select onValueChange={handleLanguageChange} required name="language">
+                <form action={`/${language}/chat`} className='flex flex-col items-center justify-center gap-4 mt-16'>
+                    <Select value={language} onValueChange={handleLanguageChange} required name="language">
                         <SelectTrigger className={cn("bg-transparent")}>
                             <SelectValue placeholder="Preferred Language" />
                         </SelectTrigger>
                         <SelectContent className={cn('bg-[#2f2f2f]')}>
-                            <SelectItem value="english">English</SelectItem>
-                            <SelectItem value="arabic">Arabic</SelectItem>
-                            <SelectItem value="russian">Russian</SelectItem>
-                            <SelectItem value="french">French</SelectItem>
-                            <SelectItem value="german">German</SelectItem>
-                            <SelectItem value="spanish">Spanish</SelectItem>
+                            <SelectItem value="en">English</SelectItem>
+                            <SelectItem value="ar">Arabic</SelectItem>
+                            <SelectItem value="ru">Russian</SelectItem>
+                            <SelectItem value="fr">French</SelectItem>
+                            <SelectItem value="de">German</SelectItem>
+                            <SelectItem value="es">Spanish</SelectItem>
                         </SelectContent>
                     </Select>
                     <Button
