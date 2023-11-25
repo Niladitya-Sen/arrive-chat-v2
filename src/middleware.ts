@@ -42,20 +42,20 @@ export async function middleware(request: NextRequest) {
     );
 
     if (token && creds.success) {
-        const response = NextResponse.next();
-        response.cookies.set('token', token, {
+        //const response = NextResponse.next();
+        NextResponse.next().cookies.set('token', token, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
-        response.cookies.set('language', creds.language, {
+        NextResponse.next().cookies.set('language', creds.language, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
-        response.cookies.set('roomno', creds.roomno, {
+        NextResponse.next().cookies.set('roomno', creds.roomno, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
@@ -72,8 +72,8 @@ export async function middleware(request: NextRequest) {
     } */
 
     if (lang) {
-        const response = NextResponse.next();
-        response.cookies.set('language', lang, {
+        //const response = NextResponse.next();
+        NextResponse.next().cookies.set('language', lang, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
