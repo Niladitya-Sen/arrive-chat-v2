@@ -1,10 +1,10 @@
 "use client";
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HiHome } from 'react-icons/hi2';
 import { BsFillBellFill, BsPersonFill } from 'react-icons/bs';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { useSearchParams, usePathname, useRouter, useParams } from 'next/navigation';
 import { useChatSidebarNavigation } from '@/store/ChatSidebarNavigation';
 import { cn } from '@/lib/utils';
 import { CgClose } from 'react-icons/cg';
@@ -19,6 +19,7 @@ import { Playfair_Display } from "next/font/google";
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useAlertStore } from '@/store/AlertStore';
+import { getDictionary } from '@/app/[lang]/dictionaries';
 
 const playfair_Display = Playfair_Display({
     weight: "400",
@@ -45,6 +46,7 @@ type AddCustomerResponseType = {
 export default function CaptainSidebar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
+    const params = useParams();
     const isOpen = useChatSidebarNavigation(state => state.isOpen);
     const toggleRoomSidebar = useCaptainRoomSidebar(state => state.toggle);
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
@@ -52,6 +54,14 @@ export default function CaptainSidebar() {
     const router = useRouter();
     const { openAlert, closeAlert } = useAlertStore(state => state);
     const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
+    const [dict, setDict] = useState<{ [key: string]: { [key: string]: string; }; }>({});
+
+    useEffect(() => {
+        (async () => {
+            const dict = await getDictionary(params.lang as string);
+            setDict(dict);
+        })();
+    }, []);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -99,20 +109,20 @@ export default function CaptainSidebar() {
             </button>
             <button
                 onClick={() => {
-                    if (pathname.includes('/captain/chat')) {
+                    if (pathname.includes(`/${params.lang}/captain/chat`)) {
                         toggleSidebar();
                         toggleServicesSidebar();
                     } else {
-                        router.push(`/captain/chat?language=${searchParams.get('language')}`)
+                        router.push(`/${params.lang}/captain/chat?language=${searchParams.get('language')}`)
                     }
                 }}
                 className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`)}>
                 <HiHome className='text-2xl' />
-                <p className='text-sm'>Home</p>
+                <p className='text-sm'>{dict?.sidebar?.Home}</p>
             </button>
             <Link
                 href={{
-                    pathname: '/captain/notifications',
+                    pathname: `/${params.lang}/captain/notifications`,
                     query: {
                         language: searchParams.get('language')
                     }
@@ -120,21 +130,21 @@ export default function CaptainSidebar() {
                 onClick={toggleSidebar}
                 className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`)}>
                 <BsFillBellFill className='text-2xl' />
-                <p className='text-sm'>Notifications</p>
+                <p className='text-sm'>{dict?.sidebar?.Notifications}</p>
             </Link>
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
                 onClick={() => {
-                    if (pathname.includes('/captain/profile')) {
+                    if (pathname.includes(`/${params.lang}/captain/profile`)) {
                         toggleSidebar();
                         toggleServicesSidebar();
                     } else {
-                        router.push("/captain/profile");
+                        router.push(`/${params.lang}/captain/profile`);
                     }
                 }}
             >
                 <BsPersonFill className="text-2xl text-primary" />
-                <p className='text-sm text-primary'>Profile</p>
+                <p className='text-sm text-primary'>{dict?.sidebar?.Profile}</p>
             </button>
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
@@ -143,24 +153,24 @@ export default function CaptainSidebar() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M14 6V21H3V19H5V3H14V4H19V19H21V21H17V6H14ZM10 11V13H12V11H10Z" fill="#615641" />
                 </svg>
-                <p className='text-sm text-primary'>Rooms</p>
+                <p className='text-sm text-primary'>{dict?.sidebar?.Rooms}</p>
             </button>
             <Dialog>
                 <DialogTrigger asChild>
                     <button className={`flex sm:flex-col gap-2 items-center text-primary text-sm`}>
                         <IoPersonAdd className="text-2xl" />
-                        <p>Add Customer</p>
+                        <p>{dict?.sidebar?.["Add Customer"]}</p>
                     </button>
                 </DialogTrigger>
                 <DialogContent className={cn('p-0 overflow-hidden max-w-2xl bg-[#2f2f2f]')}>
                     <ChatHeader />
-                    <h1 className={`${playfair_Display.className} text-2xl text-center`}>Customer Details Form</h1>
+                    <h1 className={`${playfair_Display.className} text-2xl text-center`}>{dict?.captain?.customerDetailsForm}</h1>
                     <form
                         className='grid grid-cols-2 px-16 py-8 gap-4'
                         onSubmit={handleSubmit}
                     >
                         <div className='w-full'>
-                            <label htmlFor="first_name" className='text-sm'>First Name</label>
+                            <label htmlFor="first_name" className='text-sm'>{dict?.captain?.fname}</label>
                             <Input
                                 required
                                 id='first_name'
@@ -169,7 +179,7 @@ export default function CaptainSidebar() {
                             />
                         </div>
                         <div className='w-full'>
-                            <label htmlFor="last_name" className='text-sm'>Last Name</label>
+                            <label htmlFor="last_name" className='text-sm'>{dict?.captain?.lname}</label>
                             <Input
                                 required
                                 name="lname"
@@ -178,7 +188,7 @@ export default function CaptainSidebar() {
                             />
                         </div>
                         <div className='w-full'>
-                            <label htmlFor="email" className='text-sm'>Email ID</label>
+                            <label htmlFor="email" className='text-sm'>{dict?.captain?.email}</label>
                             <Input
                                 required
                                 name="email"
@@ -188,7 +198,7 @@ export default function CaptainSidebar() {
                             />
                         </div>
                         <div className='w-full'>
-                            <label htmlFor="phoneno" className='text-sm'>Mobile Number</label>
+                            <label htmlFor="phoneno" className='text-sm'>{dict?.captain?.number}</label>
                             <Input
                                 required
                                 name="phone_number"
@@ -200,7 +210,7 @@ export default function CaptainSidebar() {
                             />
                         </div>
                         <div className='w-full'>
-                            <label htmlFor="checkin" className='text-sm'>Check In</label>
+                            <label htmlFor="checkin" className='text-sm'>{dict?.captain?.checkin}</label>
                             <Input
                                 required
                                 name="arrival_date"
@@ -210,7 +220,7 @@ export default function CaptainSidebar() {
                             />
                         </div>
                         <div className='w-full'>
-                            <label htmlFor="checkout" className='text-sm'>Check Out</label>
+                            <label htmlFor="checkout" className='text-sm'>{dict?.captain?.checkout}</label>
                             <Input
                                 required
                                 name="departure_date"
@@ -220,7 +230,7 @@ export default function CaptainSidebar() {
                             />
                         </div>
                         <div className='w-full'>
-                            <label htmlFor="bookingid" className='text-sm'>Booking ID</label>
+                            <label htmlFor="bookingid" className='text-sm'>{dict?.captain?.booking}</label>
                             <Input
                                 required
                                 name="unique_id"
@@ -228,7 +238,7 @@ export default function CaptainSidebar() {
                                 className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
                             />
                         </div>
-                        <Button className={cn('col-span-2 w-fit place-self-center')} size="lg">Submit</Button>
+                        <Button className={cn('col-span-2 w-fit place-self-center')} size="lg">{dict?.captain?.submit}</Button>
                     </form>
                 </DialogContent>
                 <DialogClose ref={dialogCloseRef} />

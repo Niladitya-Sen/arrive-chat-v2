@@ -8,7 +8,7 @@ import { LanguagesIcon } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 
-export default function LanguageBtn() {
+export default function LanguageBtn({ title }: { title: string }) {
     const searchParams = useSearchParams();
     const [open, setOpen] = useState(false);
 
@@ -36,7 +36,7 @@ export default function LanguageBtn() {
                     })}
                 >
                     <LanguagesIcon className='text-xl' />
-                    <p>Language</p>
+                    <p>{title}</p>
                 </button>
             </DialogTrigger>
             <DialogContent className={cn("bg-[#2f2f2f] p-10")}>

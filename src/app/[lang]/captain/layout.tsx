@@ -13,7 +13,7 @@ import { CheckCircle, Loader2, AlertCircle } from 'lucide-react'
 import { useAlertStore } from '@/store/AlertStore'
 
 
-export default function CaptainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function CaptainLayout({ children, params: { lang } }: Readonly<{ children: React.ReactNode, params: { lang: string } }>) {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const isRoomOpen = useCaptainRoomSidebar(state => state.isOpen);
     const pathname = usePathname();
@@ -49,7 +49,7 @@ export default function CaptainLayout({ children }: Readonly<{ children: React.R
             </Alert>
 
             {
-                pathname === "/captain" ? (
+                pathname === `/${lang}/captain` ? (
                     <>
                         {children}
                     </>
@@ -58,9 +58,9 @@ export default function CaptainLayout({ children }: Readonly<{ children: React.R
                         <ChatHeader />
                         <div className={cn('grid grid-rows-[6rem_1fr] h-full sm:grid-cols-[8rem_2px_1fr] sm:grid-rows-[100%] text-black relative isolate bg-gradient-to-r from-[#eadec7] via-[#fcf8f0] to-[#eadec7]', {
                             'sm:grid-cols-[8rem_2px_1fr]': !isOpen,
-                            'sm:grid-cols-[8rem_2px_160px_1fr]': !isOpen && isRoomOpen && pathname !== '/captain/profile',
+                            'sm:grid-cols-[8rem_2px_160px_1fr]': !isOpen && isRoomOpen && pathname !== `/${lang}/captain/profile`,
                             'sm:grid-cols-[8rem_2px_300px_1fr]': isOpen,
-                            'sm:grid-cols-[8rem_2px_300px_160px_1fr]': isRoomOpen && isOpen && pathname !== '/captain/profile',
+                            'sm:grid-cols-[8rem_2px_300px_160px_1fr]': isRoomOpen && isOpen && pathname !== `/${lang}/captain/profile`,
                         })}>
                             <CaptainSidebarToggleButton />
                             <CaptainSidebar />

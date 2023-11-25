@@ -14,7 +14,7 @@ export default function CaptainChatLayout({ children }: Readonly<{ children: Rea
             <CaptainServicesSidebar />
             <CaptainRoomsSidebar />
             <div className={cn('w-full h-screen', {
-                'hidden': isOpen,
+                'hidden sm:block': isOpen,
                 'block': !isOpen,
             })}>
                 {children}

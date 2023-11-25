@@ -1,13 +1,16 @@
 "use client";
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { HiChevronDoubleLeft } from 'react-icons/hi';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import { Playfair_Display } from 'next/font/google';
 import Image from 'next/image';
 import { useServicesStore } from '@/store/CaptainStore';
+import { getDictionary } from '@/app/[lang]/dictionaries';
+import { useParams } from 'next/navigation';
+import { HiChevronDoubleRight } from 'react-icons/hi2';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -43,22 +46,38 @@ export default function CaptainServicesSidebar() {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const toggleSidebar = useServicesSidebarNavigation(state => state.toggle);
     const services = useServicesStore(state => state.services);
+    const params = useParams();
+    const [dict, setDict] = useState<{ [key: string]: { [key: string]: string; }; }>({});
+
+    useEffect(() => {
+        (async () => {
+            const dict = await getDictionary(params.lang as string);
+            setDict(dict);
+        })();
+    }, []);
 
     return (
         <section
             className={cn('transition-all duration-300 border-r-2 border-r-primary', {
                 'static': isOpen,
-                'hidden': !isOpen
+                'hidden': !isOpen,
+                'border-r-0 border-l-2 border-l-primary': params.lang === 'ar',
             })}
         >
             <div className='m-6'>
                 <div className='flex flex-row justify-between items-center w-full mb-4'>
-                    <h1 className={playfairDisplay.className}>Welcome to Arrive Chat</h1>
+                    <h1 className={playfairDisplay.className}>{dict?.chatPage?.servicesH1}</h1>
                     <button
                         className='text-2xl self-end'
                         onClick={toggleSidebar}
                     >
-                        <HiChevronDoubleLeft />
+                        {
+                            params.lang === 'ar' ? (
+                                <HiChevronDoubleRight />
+                            ) : (
+                                <HiChevronDoubleLeft />
+                            )
+                        }
                     </button>
                 </div>
                 <div
@@ -69,11 +88,13 @@ export default function CaptainServicesSidebar() {
                             <Link
                                 key={index}
                                 href={{
-                                    pathname: "/captain" + service?.link
+                                    pathname: `/${params.lang}/captain` + service?.link
                                 }}
                             >
                                 <CaptainServiceCard
-                                    {...service}
+                                    image={service.image}
+                                    title={dict?.services?.[service.title]}
+                                    link={service.link}
                                 />
                             </Link>
                         ))

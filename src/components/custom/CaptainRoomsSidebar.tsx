@@ -2,15 +2,16 @@
 
 import { cn } from '@/lib/utils'
 import { useCaptainRoomSidebar } from '@/store/CaptainRoomSidebar';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { buttonVariants } from '../ui/button';
 import Link from 'next/link';
 import socket from '@/socket/socket';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { IoClose } from "react-icons/io5";
 import { useRoomStore } from '@/store/CaptainStore';
 import { MdDelete } from "react-icons/md";
 import { HiChevronDoubleLeft } from 'react-icons/hi2';
+import { getDictionary } from '@/app/[lang]/dictionaries';
 
 
 export default function CaptainRoomsSidebar() {
@@ -20,6 +21,15 @@ export default function CaptainRoomsSidebar() {
     const searchParams = useSearchParams();
     const { rooms, setRooms } = useRoomStore(state => state);
     const pathname = usePathname();
+    const params = useParams();
+    const [dict, setDict] = useState<{ [key: string]: { [key: string]: string; }; }>({});
+
+    useEffect(() => {
+        (async () => {
+            const dict = await getDictionary(params.lang as string);
+            setDict(dict);
+        })();
+    }, []);
 
     useEffect(() => {
         socket.connect();
@@ -61,10 +71,11 @@ export default function CaptainRoomsSidebar() {
     return (
         <section className={cn('border-0 border-r-2 border-primary flex-col gap-2 items-center sm:w-full h-full overflow-y-auto scrollbar-none absolute z-[60] sm:relative w-[50%] bg-white sm:bg-transparent', {
             'hidden': !isRoomOpen,
-            'flex': isRoomOpen
+            'flex': isRoomOpen,
+            'border-r-0 border-l-2 border-l-primary': params.lang === 'ar',
         })}>
             <div className="w-full flex items-center justify-between sm:justify-center px-2">
-                <p className='pb-4 pt-6 text-center'>Room Numbers</p>
+                <p className='pb-4 pt-6 text-center'>{dict?.captain?.room_number}</p>
                 <button
                     className='text-2xl static sm:hidden'
                     onClick={toggleRoomBar}

@@ -1,4 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { match } from '@formatjs/intl-localematcher';
+import Negotiator from 'negotiator';
+
+const locales = ['en', 'ar', 'ru', 'fr', 'de', 'it', 'es'];
+const defaultLocale = 'en';
+
+function getLocale(request: NextRequest) {
+    const headers = {
+        'accept-language': request.headers.get('accept-language') ?? '',
+    };
+    const languages = new Negotiator({ headers }).languages();
+    return match(languages, locales, defaultLocale);
+}
 
 async function verifyToken(token: string) {
     try {
@@ -20,9 +33,13 @@ export async function middleware(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const token = searchParams.get('token');
     const language = searchParams.get('language');
-
     console.log(await verifyToken(token as string));
     const creds = await verifyToken(token as string);
+    const { pathname } = request.nextUrl;
+
+    const pathnameHasLocale = locales.some(
+        (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    );
 
     if (token && creds.success) {
         const response = NextResponse.next();
@@ -66,7 +83,13 @@ export async function middleware(request: NextRequest) {
         return response;
     }
 
-    return NextResponse.next();
+    if (pathnameHasLocale) return;
+    // Redirect if there is no locale
+    const locale = getLocale(request)
+    request.nextUrl.pathname = `/${locale}${pathname}`
+    // e.g. incoming request is /products
+    // The new URL is now /en-US/products
+    return Response.redirect(request.nextUrl);
 }
 
 export const config = {

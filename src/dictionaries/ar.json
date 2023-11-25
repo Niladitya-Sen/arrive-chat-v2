@@ -1,0 +1,61 @@
+{
+    "landingPage": {
+        "h11": "أضف نكهة إلى محادثاتك",
+        "h12": "كل يوم!",
+        "h21": "استعد للانبهار بخدمة الدردشة الذكية الثورية من Arrive Chat!",
+        "h22": "هل أنت مستعد للرحيل؟",
+        "starBox": "تحديث جديد متاح",
+        "rightBox": "استكشف أفضل مساعد شخصي ذكاء صناعي",
+        "rightBox2": "نحن نفهم أن كل متعلم فريد.",
+        "rightBoxBtn": "استكشف الآن",
+        "languageBtn": "اللغة"
+    },
+    "chatPage": {
+        "dialogBtn": "احجز الآن",
+        "servicesH1": "مرحبًا بك في Arrive Chat"
+    },
+    "services": {
+        "Cab/Taxi Service": "خدمة سيارات الأجرة / التاكسي",
+        "Restaurant & Cafe": "مطعم وكافيه",
+        "Laundry Service": "خدمة الغسيل",
+        "Meeting Room": "قاعة الاجتماعات",
+        "Chat with hotel staff": "الدردشة مع موظفي الفندق",
+        "Room Service": "خدمة الغرف",
+        "Sightseeing": "مشاهدة المعالم السياحية",
+        "Other Services like Spa, Gym, etc.": "خدمات أخرى مثل السبا، الصالة الرياضية، إلخ"
+    },
+    "sidebar": {
+        "Home": "الرئيسية",
+        "Notifications": "الإشعارات",
+        "Profile": "الملف الشخصي",
+        "Services": "الخدمات",
+        "Add Customer": "إضافة عميل",
+        "Rooms": "الغرف"
+    },
+    "captain": {
+        "fname": "الاسم الأول",
+        "lname": "اسم العائلة",
+        "email": "البريد الإلكتروني",
+        "number": "رقم الجوال",
+        "checkin": "تسجيل الوصول",
+        "checkout": "تسجيل الخروج",
+        "booking": "رقم الحجز",
+        "submit": "إرسال",
+        "room_number": "رقم الغرفة",
+        "login": "تسجيل الدخول",
+        "signout": "تسجيل الخروج",
+        "name": "الاسم",
+        "preferred": "اللغة المفضلة",
+        "employee": "رقم الموظف",
+        "password": "كلمة المرور",
+        "dialogH1": "تسجيل الدخول إلى Arrive Chat",
+        "yourName": "اسمك",
+        "yourEmployeeID": "معرف موظفك",
+        "yourEmail": "بريدك الإلكتروني",
+        "yourPhoneNumber": "رقم هاتفك",
+        "selectLanguage": "اختر اللغة",
+        "update": "تحديث",
+        "customerDetailsForm": "نموذج تفاصيل العميل",
+        "profile": "الملف الشخصي"
+    }
+}

@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   description: 'Arrive Chat UAE',
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children, params: { lang } }: Readonly<{ children: React.ReactNode, params: { lang: string } }>) {
   return (
-    <html lang="en" dir='ltr'>
-      <body className={`${inter.className} max-w-screen-2xl mx-auto`}>
-        <CheckDir />
+    <html dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <body className={`${inter.className} max-w-screen-2xl mx-auto overflow-x-hidden`}>
+        {/* <CheckDir /> */}
         {children}
       </body>
     </html>

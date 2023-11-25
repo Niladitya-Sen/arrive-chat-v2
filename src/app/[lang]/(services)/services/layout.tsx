@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import React from 'react';
 
-export default function ServicesLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function ServicesLayout({ children, params: { lang } }: Readonly<{ children: React.ReactNode, params: { lang: string } }>) {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
 
     return (
@@ -15,7 +15,7 @@ export default function ServicesLayout({ children }: Readonly<{ children: React.
                 'grid-cols-1': !isOpen,
             })}
         >
-            <ServicesSidebar />
+            <ServicesSidebar lang={lang} />
             <div
                 className={cn('hidden sm:flex', {
                     'hidden': isOpen,

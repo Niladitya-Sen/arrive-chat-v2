@@ -1,0 +1,61 @@
+{
+    "landingPage": {
+        "h11": "Aggiungi pepe alle tue chat",
+        "h12": "ogni giorno!",
+        "h21": "Preparati a rimanere stupito dal rivoluzionario servizio di chatbot AI di Arrive Chat!",
+        "h22": "Sei pronto per l'avventura?",
+        "starBox": "Nuovo aggiornamento disponibile",
+        "rightBox": "Esplora il miglior assistente personale AI",
+        "rightBox2": "Capiamo che ogni apprendista è unico.",
+        "rightBoxBtn": "Esplora ora",
+        "languageBtn": "Lingua"
+    },
+    "chatPage": {
+        "dialogBtn": "Prenota ora",
+        "servicesH1": "Benvenuto su Arrive Chat"
+    },
+    "services": {
+        "Cab/Taxi Service": "Servizio taxi",
+        "Restaurant & Cafe": "Ristorante e caffè",
+        "Laundry Service": "Servizio lavanderia",
+        "Meeting Room": "Sala riunioni",
+        "Chat with hotel staff": "Chatta con il personale dell'hotel",
+        "Room Service": "Servizio in camera",
+        "Sightseeing": "Visite turistiche",
+        "Other Services like Spa, Gym, etc.": "Altri servizi come spa, palestra, ecc."
+    },
+    "sidebar": {
+        "Home": "Home",
+        "Notifications": "Notifiche",
+        "Profile": "Profilo",
+        "Services": "Servizi",
+        "Add Customer": "Aggiungi cliente",
+        "Rooms": "Camere"
+    },
+    "captain": {
+        "fname": "Nome",
+        "lname": "Cognome",
+        "email": "Indirizzo email",
+        "number": "Numero di telefono",
+        "checkin": "Check-in",
+        "checkout": "Check-out",
+        "booking": "ID prenotazione",
+        "submit": "Invia",
+        "room_number": "Numero della stanza",
+        "login": "Accesso",
+        "signout": "Disconnessione",
+        "name": "Nome",
+        "preferred": "Lingua preferita",
+        "employee": "ID dipendente",
+        "password": "Password",
+        "dialogH1": "Accesso a Arrive Chat",
+        "yourName": "Il tuo nome",
+        "yourEmployeeID": "Il tuo ID dipendente",
+        "yourEmail": "La tua email",
+        "yourPhoneNumber": "Il tuo numero di telefono",
+        "selectLanguage": "Seleziona lingua",
+        "update": "Aggiorna",
+        "customerDetailsForm": "Modulo dettagli cliente",
+        "profile": "Profilo"
+    }
+}

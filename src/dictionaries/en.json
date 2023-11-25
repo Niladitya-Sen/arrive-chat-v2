@@ -1,0 +1,61 @@
+{
+    "landingPage": {
+        "h11": "Zest up your chats",
+        "h12": "each and every day!",
+        "h21": "Get ready to be blown away by the revolutionary AI chatbot service of Arrive Chat!",
+        "h22": "Are you geared up for the ride?",
+        "starBox": "New Update Available",
+        "rightBox": "Explore the best AI personal assistant",
+        "rightBox2": "We understand that every learner is unique.",
+        "rightBoxBtn": "Explore Now",
+        "languageBtn": "Language"
+    },
+    "chatPage": {
+        "dialogBtn": "Book Now",
+        "servicesH1": "Welcome to Arrive Chat"
+    },
+    "services": {
+        "Cab/Taxi Service": "Cab/Taxi Service",
+        "Restaurant & Cafe": "Restaurant & Cafe",
+        "Laundry Service": "Laundry Service",
+        "Meeting Room": "Meeting Room",
+        "Chat with hotel staff": "Chat with hotel staff",
+        "Room Service": "Room Service",
+        "Sightseeing": "Sightseeing",
+        "Other Services like Spa, Gym, etc.": "Other Services like Spa, Gym, etc."
+    },
+    "sidebar": {
+        "Home": "Home",
+        "Notifications": "Notifications",
+        "Profile": "Profile",
+        "Services": "Services",
+        "Add Customer": "Add Customer",
+        "Rooms": "Rooms"
+    },
+    "captain": {
+        "fname": "First Name",
+        "lname": "Last Name",
+        "email": "Email ID",
+        "number": "Mobile Number",
+        "checkin": "Check In",
+        "checkout": "Check Out",
+        "booking": "Booking ID",
+        "submit": "Submit",
+        "room_number": "Room Number",
+        "login": "Login",
+        "signout": "Sign Out",
+        "name": "Name",
+        "preferred": "Preferred Language",
+        "employee": "Employee ID",
+        "password": "Password",
+        "dialogH1": "Login to Arrive Chat",
+        "yourName": "Your Name",
+        "yourEmployeeID": "Your Employee ID",
+        "yourEmail": "Your Email",
+        "yourPhoneNumber": "Your Phone Number",
+        "selectLanguage": "Select Language",
+        "update": "Update",
+        "customerDetailsForm": "Customer Details Form",
+        "profile": "Profile"
+    }
+}

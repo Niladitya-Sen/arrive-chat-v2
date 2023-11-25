@@ -1,12 +1,13 @@
 "use client"
 
-import React from 'react'
-import { HiChevronDoubleLeft } from 'react-icons/hi'
+import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Playfair_Display } from 'next/font/google'
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog'
+import { HiChevronDoubleRight, HiChevronDoubleLeft } from 'react-icons/hi2'
+import { getDictionary } from '../../dictionaries'
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -15,29 +16,40 @@ const playfairDisplay = Playfair_Display({
     display: 'swap',
 })
 
-export default function CaptainProfileLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function CaptainProfileLayout({ children, params: { lang } }: Readonly<{ children: React.ReactNode, params: { lang: string } }>) {
     const toggleSidebar = useServicesSidebarNavigation(state => state.toggle);
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
+    const [dict, setDict] = useState<{ [key: string]: { [key: string]: string; }; }>({});
+
+    useEffect(() => {
+        (async () => {
+            const dict = await getDictionary(lang);
+            setDict(dict);
+        })();
+    }, []);
 
     return (
         <React.Fragment>
             <section className={cn('flex flex-col p-4 border-0 border-r-2 border-primary', {
                 'flex': isOpen,
-                'hidden': !isOpen
+                'hidden': !isOpen,
+                'border-r-0 border-l-2': lang === "ar"
             })}>
                 <div className='flex flex-row justify-between items-center w-full mb-4'>
-                    <h1 className={`${playfairDisplay.className} text-xl`}>Profile</h1>
+                    <h1 className={`${playfairDisplay.className} text-xl`}>{dict?.captain?.profile}</h1>
                     <button
                         className='text-2xl self-end'
                         onClick={toggleSidebar}
                     >
-                        <HiChevronDoubleLeft />
+                        {
+                            lang === "ar" ? <HiChevronDoubleRight /> : <HiChevronDoubleLeft />
+                        }
                     </button>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button className='rounded-none'>Sign Out</Button>
+                        <Button className='rounded-none'>{dict?.captain?.signout}</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>

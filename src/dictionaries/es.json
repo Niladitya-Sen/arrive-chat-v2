@@ -1,0 +1,61 @@
+{
+    "landingPage": {
+        "h11": "Dale sabor a tus chats",
+        "h12": "¡cada día!",
+        "h21": "¡Prepárate para sorprenderte con el revolucionario servicio de chatbot de inteligencia artificial de Arrive Chat!",
+        "h22": "¿Estás listo para la aventura?",
+        "starBox": "Nueva actualización disponible",
+        "rightBox": "Explora el mejor asistente personal de inteligencia artificial",
+        "rightBox2": "Entendemos que cada aprendiz es único.",
+        "rightBoxBtn": "Explorar ahora",
+        "languageBtn": "Idioma"
+    },
+    "chatPage": {
+        "dialogBtn": "Reservar ahora",
+        "servicesH1": "Bienvenido a Arrive Chat"
+    },
+    "services": {
+        "Cab/Taxi Service": "Servicio de taxi",
+        "Restaurant & Cafe": "Restaurante y cafetería",
+        "Laundry Service": "Servicio de lavandería",
+        "Meeting Room": "Sala de reuniones",
+        "Chat with hotel staff": "Chat con el personal del hotel",
+        "Room Service": "Servicio de habitaciones",
+        "Sightseeing": "Turismo",
+        "Other Services like Spa, Gym, etc.": "Otros servicios como spa, gimnasio, etc."
+    },
+    "sidebar": {
+        "Home": "Inicio",
+        "Notifications": "Notificaciones",
+        "Profile": "Perfil",
+        "Services": "Servicios",
+        "Add Customer": "Agregar cliente",
+        "Rooms": "Habitaciones"
+    },
+    "captain": {
+        "fname": "Nombre",
+        "lname": "Apellido",
+        "email": "Correo electrónico",
+        "number": "Número de teléfono",
+        "checkin": "Registro de entrada",
+        "checkout": "Registro de salida",
+        "booking": "ID de reserva",
+        "submit": "Enviar",
+        "room_number": "Número de habitación",
+        "login": "Iniciar sesión",
+        "signout": "Cerrar sesión",
+        "name": "Nombre",
+        "preferred": "Idioma preferido",
+        "employee": "ID de empleado",
+        "password": "Contraseña",
+        "dialogH1": "Iniciar sesión en Arrive Chat",
+        "yourName": "Tu nombre",
+        "yourEmployeeID": "Tu ID de empleado",
+        "yourEmail": "Tu correo electrónico",
+        "yourPhoneNumber": "Tu número de teléfono",
+        "selectLanguage": "Seleccionar idioma",
+        "update": "Actualizar",
+        "customerDetailsForm": "Formulario de detalles del cliente",
+        "profile": "Perfil"
+    }
+}

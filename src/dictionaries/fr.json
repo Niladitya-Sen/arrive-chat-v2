@@ -1,0 +1,61 @@
+{
+    "landingPage": {
+        "h11": "Donnez du peps à vos discussions",
+        "h12": "chaque jour !",
+        "h21": "Préparez-vous à être époustouflé par le service de chatbot révolutionnaire d'Arrive Chat !",
+        "h22": "Êtes-vous prêt pour le voyage ?",
+        "starBox": "Nouvelle mise à jour disponible",
+        "rightBox": "Explorez le meilleur assistant personnel IA",
+        "rightBox2": "Nous comprenons que chaque apprenant est unique.",
+        "rightBoxBtn": "Explorer maintenant",
+        "languageBtn": "Langue"
+    },
+    "chatPage": {
+        "dialogBtn": "Réserver maintenant",
+        "servicesH1": "Bienvenue sur Arrive Chat"
+    },
+    "services": {
+        "Cab/Taxi Service": "Service de taxi",
+        "Restaurant & Cafe": "Restaurant et café",
+        "Laundry Service": "Service de blanchisserie",
+        "Meeting Room": "Salle de réunion",
+        "Chat with hotel staff": "Discuter avec le personnel de l'hôtel",
+        "Room Service": "Service en chambre",
+        "Sightseeing": "Visite touristique",
+        "Other Services like Spa, Gym, etc.": "Autres services tels que Spa, Gym, etc."
+    },
+    "sidebar": {
+        "Home": "Accueil",
+        "Notifications": "Notifications",
+        "Profile": "Profil",
+        "Services": "Services",
+        "Add Customer": "Ajouter un client",
+        "Rooms": "Chambres"
+    },
+    "captain": {
+        "fname": "Prénom",
+        "lname": "Nom de famille",
+        "email": "ID e-mail",
+        "number": "Numéro de portable",
+        "checkin": "Arrivée",
+        "checkout": "Départ",
+        "booking": "ID de réservation",
+        "submit": "Soumettre",
+        "room_number": "Numéro de chambre",
+        "login": "Connexion",
+        "signout": "Déconnexion",
+        "name": "Nom",
+        "preferred": "Langue préférée",
+        "employee": "ID employé",
+        "password": "Mot de passe",
+        "dialogH1": "Connexion à Arrive Chat",
+        "yourName": "Votre nom",
+        "yourEmployeeID": "Votre ID employé",
+        "yourEmail": "Votre e-mail",
+        "yourPhoneNumber": "Votre numéro de téléphone",
+        "selectLanguage": "Sélectionner la langue",
+        "update": "Mettre à jour",
+        "customerDetailsForm": "Formulaire de détails du client",
+        "profile": "Profil"
+    }
+}

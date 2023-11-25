@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { HiChevronDoubleLeft } from 'react-icons/hi';
@@ -13,6 +13,7 @@ import { Button } from '../ui/button';
 import { useCookies } from '@/hooks/useCookies';
 import socket from '@/socket/socket';
 import { services } from '@/lib/services';
+import { getDictionary } from '@/app/[lang]/dictionaries';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -23,13 +24,21 @@ const playfairDisplay = Playfair_Display({
 
 
 
-export default function ServicesSidebar() {
+export default function ServicesSidebar({ lang }: { lang: string }) {
     const isOpen = useServicesSidebarNavigation(state => state.isOpen);
     const toggleSidebar = useServicesSidebarNavigation(state => state.toggle);
     const searchParams = useSearchParams();
     const dialogRef = useRef<HTMLDialogElement>(null);
     const cookies = useCookies();
     const router = useRouter();
+    const [dict, setDict] = useState<{ [key: string]: { [key: string]: string; }; }>({});
+
+    useEffect(() => {
+        (async () => {
+            const dict = await getDictionary(lang);
+            setDict(dict);
+        })();
+    }, []);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -85,7 +94,7 @@ export default function ServicesSidebar() {
                 })}
             >
                 <div className='flex flex-row justify-between items-center w-full'>
-                    <h1 className={playfairDisplay.className}>Welcome to Arrive Chat</h1>
+                    <h1 className={playfairDisplay.className}>{dict?.chatPage?.servicesH1}</h1>
                     <button
                         className='text-2xl self-end'
                         onClick={toggleSidebar}
@@ -108,7 +117,8 @@ export default function ServicesSidebar() {
                                 }}
                             >
                                 <ServiceCard
-                                    {...service}
+                                    image={service.image}
+                                    title={dict?.services?.[service.title]}
                                     dialogRef={dialogRef}
                                 />
                             </Link>

@@ -3,8 +3,11 @@ import React from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { getDictionary } from '../../dictionaries'
 
-export default function Profile() {
+export default async function Profile({ params: { lang } }: { params: { lang: string } }) {
+    const dict = await getDictionary(lang);
+    const { yourName, yourEmployeeID, yourEmail, yourPhoneNumber, selectLanguage, update } = dict.captain;
     return (
         <form className='flex flex-col items-center justify-center gap-4 text-gray-500 max-w-md w-full place-self-center'>
             <div className='relative isolate w-fit'>
@@ -21,58 +24,60 @@ export default function Profile() {
                 </div>
             </div>
             <div className='w-full'>
-                <label htmlFor="name" className='text-sm'>Your Name</label>
+                <label htmlFor="name" className='text-sm'>{yourName}</label>
                 <Input
                     required
                     id='name'
-                    placeholder='Your Name'
+                    placeholder={yourName}
                     className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
                 />
             </div>
             <div className='w-full'>
-                <label htmlFor="Employee ID" className='text-sm'>Your Name</label>
+                <label htmlFor="Employee ID" className='text-sm'>{yourEmployeeID}</label>
                 <Input
                     required
                     id='employeeid'
-                    placeholder='Employee ID'
+                    placeholder={yourEmployeeID}
                     className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
                 />
             </div>
             <div className='w-full'>
-                <label htmlFor="email" className='text-sm'>Your Name</label>
+                <label htmlFor="email" className='text-sm'>{yourEmail}</label>
                 <Input
                     required
                     id='email'
                     type='email'
-                    placeholder='Your Email'
+                    placeholder={yourEmail}
                     className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
                 />
             </div>
             <div className='w-full'>
-                <label htmlFor="phoneno" className='text-sm'>Your Name</label>
+                <label htmlFor="phoneno" className='text-sm'>{yourPhoneNumber}</label>
                 <Input
                     required
                     id='phoneno'
                     pattern='[0-9]{10}'
-                    placeholder='Your Phone Number'
+                    placeholder={yourPhoneNumber}
                     className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
                 />
             </div>
             <div className='w-full'>
-                <label htmlFor="name" className='text-sm'>Select language</label>
-                <Select required name="language">
+                <label htmlFor="name" className='text-sm'>{selectLanguage}</label>
+                <Select dir={lang === "ar" ? "rtl" : "ltr"} required name="language">
                     <SelectTrigger className={cn("bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base")}>
-                        <SelectValue placeholder="Preferred Language" />
+                        <SelectValue placeholder={selectLanguage} />
                     </SelectTrigger>
                     <SelectContent className={cn('bg-white text-black')}>
                         <SelectItem value="english">English</SelectItem>
+                        <SelectItem value="arabic">Arabic</SelectItem>
+                        <SelectItem value="russian">Russian</SelectItem>
                         <SelectItem value="french">French</SelectItem>
                         <SelectItem value="german">German</SelectItem>
                         <SelectItem value="spanish">Spanish</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
-            <Button className='rounded-none uppercase px-14 py-6 text-white font-semibold'>Update</Button>
+            <Button className='rounded-none uppercase px-14 py-6 text-white font-semibold'>{update}</Button>
         </form>
     )
 }

@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog
 import Image from 'next/image'
 import { Input } from '../ui/input'
 import { Playfair_Display } from 'next/font/google'
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCookies } from '@/hooks/useCookies';
 
 const playfairDisplay = Playfair_Display({
@@ -19,9 +19,11 @@ const playfairDisplay = Playfair_Display({
     display: 'swap',
 });
 
-export default function CaptainNavbar() {
+export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key: string]: string } } }) {
     const router = useRouter();
     const cookies = useCookies();
+    const { login, name, preferred, employee, password, email, dialogH1 } = dict.captain;
+    const params = useParams();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -68,12 +70,12 @@ export default function CaptainNavbar() {
                             })}
                         >
                             <BsPerson className='text-xl' />
-                            <p>Login</p>
+                            <p>{login}</p>
                         </div>
                     </DialogTrigger>
                     <DialogContent className={cn("bg-[#2f2f2f] p-10")}>
                         <DialogHeader className={cn("flex flex-row items-center justify-center text-xl font-semibold")}>
-                            <h1 className={`${playfairDisplay.className} text-2xl`}>Login to Arrive Chat</h1>
+                            <h1 className={`${playfairDisplay.className} text-2xl`}>{dialogH1}</h1>
                         </DialogHeader>
                         <form
                             className='flex flex-col gap-4 mt-8'
@@ -84,28 +86,30 @@ export default function CaptainNavbar() {
                                 name='name'
                                 required
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
-                                placeholder='Name'
+                                placeholder={name}
                             />
                             <Input
                                 type='text'
                                 name='employee_id'
                                 required
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
-                                placeholder='Employee ID'
+                                placeholder={employee}
                             />
                             <Input
                                 type='email'
                                 name='email'
                                 required
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
-                                placeholder='Email'
+                                placeholder={email}
                             />
-                            <Select required name="language">
+                            <Select dir={params.lang === "ar" ? "rtl" : "ltr"} required name="language">
                                 <SelectTrigger className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}>
-                                    <SelectValue placeholder="PREFERRED LANGUAGE" />
+                                    <SelectValue placeholder={preferred} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="english">English</SelectItem>
+                                    <SelectItem value="arabic">Arabic</SelectItem>
+                                    <SelectItem value="russian">Russian</SelectItem>
                                     <SelectItem value="french">French</SelectItem>
                                     <SelectItem value="german">German</SelectItem>
                                     <SelectItem value="spanish">Spanish</SelectItem>
@@ -116,13 +120,13 @@ export default function CaptainNavbar() {
                                 name='password'
                                 required
                                 className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}
-                                placeholder='Password'
+                                placeholder={password}
                                 autoComplete='off'
                             />
                             <Button
                                 size={'lg'}
                                 className={cn('mt-8 self-center bg-[#1c1c1c] text-white uppercase rounded-none px-14 py-6 border-2 border-[#615641] hover:bg-[#615641]')}
-                            >Login</Button>
+                            >{login}</Button>
                         </form>
                     </DialogContent>
                 </Dialog>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { HiHome } from 'react-icons/hi2';
 import { BsFillBellFill } from 'react-icons/bs';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
@@ -12,13 +12,14 @@ import { HiMenuAlt2 } from 'react-icons/hi';
 import { FaPersonBooth } from 'react-icons/fa';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 
-export default function Sidebar({ children, hiddenBtns }: Readonly<{ children?: React.ReactNode, hiddenBtns?: string[] }>) {
+export default function Sidebar({ children, dict, lang }: Readonly<{ children?: React.ReactNode, dict: { [key: string]: { [key: string]: string; }; }, lang: string }>) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const isOpen = useChatSidebarNavigation(state => state.isOpen);
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
     const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
     const router = useRouter();
+    const { Home, Notifications, Services } = dict.sidebar;
 
     return (
         <section
@@ -34,9 +35,8 @@ export default function Sidebar({ children, hiddenBtns }: Readonly<{ children?: 
                 <CgClose />
             </button>
             <Link
-                hidden={hiddenBtns?.includes('home')}
                 href={{
-                    pathname: '/chat',
+                    pathname: `/${lang}/chat`,
                     query: {
                         language: searchParams.get('language')
                     }
@@ -45,21 +45,19 @@ export default function Sidebar({ children, hiddenBtns }: Readonly<{ children?: 
                 className={`flex sm:flex-col gap-2 items-center ${!pathname.includes('chat') ? 'text-primary' : 'text-black'}`}
             >
                 <HiHome className='text-2xl' />
-                <p className='text-sm'>Home</p>
+                <p className='text-sm'>{Home}</p>
             </Link>
             <Link
                 href={{
-                    pathname: '/notifications',
+                    pathname: `/${lang}/notifications`,
                     query: {
                         language: searchParams.get('language')
                     }
                 }}
                 onClick={toggleSidebar}
-                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`, {
-                    'hidden': hiddenBtns?.includes('notifications')
-                })}>
+                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`)}>
                 <BsFillBellFill className='text-2xl' />
-                <p className='text-sm'>Notifications</p>
+                <p className='text-sm'>{Notifications}</p>
             </Link>
             <button
                 onClick={() => {
@@ -67,15 +65,13 @@ export default function Sidebar({ children, hiddenBtns }: Readonly<{ children?: 
                         toggleSidebar();
                         toggleServicesSidebar();
                     } else {
-                        router.push(`/services`);
+                        router.push(`/${lang}/services`);
                         toggleServicesSidebar();
                     }
                 }}
-                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`, {
-                    'hidden': hiddenBtns?.includes('services')
-                })}>
+                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`)}>
                 <FaPersonBooth className='text-2xl' />
-                <p className='text-sm'>Services</p>
+                <p className='text-sm'>{Services}</p>
             </button>
             {children}
         </section>
