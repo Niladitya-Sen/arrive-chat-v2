@@ -41,26 +41,34 @@ export async function middleware(request: NextRequest) {
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
 
+    if (pathnameHasLocale) return;
+    // Redirect if there is no locale
+    const locale = getLocale(request);
+    request.nextUrl.pathname = `/${locale}${pathname}`
+    // e.g. incoming request is /products
+    // The new URL is now /en-US/products
+    const response =  NextResponse.redirect(request.nextUrl);
+
     if (token && creds.success) {
-        //const response = NextResponse.next();
-        NextResponse.next().cookies.set('token', token, {
+        response.cookies.set('token', token, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
-        NextResponse.next().cookies.set('language', creds.language, {
+        response.cookies.set('language', creds.language, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
-        NextResponse.next().cookies.set('roomno', creds.roomno, {
+        response.cookies.set('roomno', creds.roomno, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
+        return response;
     }
 
     /* if (!request.cookies.get('token') && request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.includes('captain')) {
@@ -72,22 +80,16 @@ export async function middleware(request: NextRequest) {
     } */
 
     if (lang) {
-        //const response = NextResponse.next();
-        NextResponse.next().cookies.set('language', lang, {
+        response.cookies.set('language', lang, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
+        return response;
     }
-
-    if (pathnameHasLocale) return;
-    // Redirect if there is no locale
-    const locale = getLocale(request);
-    request.nextUrl.pathname = `/${locale}${pathname}`
-    // e.g. incoming request is /products
-    // The new URL is now /en-US/products
-    return NextResponse.redirect(request.nextUrl);
+    
+    return response;
 }
 
 export const config = {
