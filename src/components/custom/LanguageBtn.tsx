@@ -7,11 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LanguagesIcon } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
     const searchParams = useSearchParams();
     const [open, setOpen] = useState(false);
     const [language, setLanguage] = useState('en');
+    const router = useRouter();
 
     useEffect(() => {
         if (searchParams.get('token')) {
@@ -25,6 +27,35 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
             document.querySelector('html')?.setAttribute('dir', 'rtl');
         } else {
             document.querySelector('html')?.setAttribute('dir', 'ltr');
+        }
+    }
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        const lang: { [key: string]: string } = {
+            en: 'English',
+            ar: 'Arabic',
+            ru: 'Russian',
+            fr: 'French',
+            de: 'German',
+            es: 'Spanish',
+        }
+
+        const response = await fetch('https://ae.arrive.waysdatalabs.com/api/language', {
+            method: 'POST',
+            body: JSON.stringify({
+                language: lang[language],
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${searchParams.get('token')}`,
+            }
+        });
+        const result = await response.json();
+        console.log(result);
+        if (result.success) {
+            router.push(`/${language}/chat`);
         }
     }
 
@@ -45,7 +76,7 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
                 <DialogHeader className={cn("flex flex-row items-center justify-center text-xl font-semibold")}>
                     <h1>Please Choose Language</h1>
                 </DialogHeader>
-                <form action={`/${language}/chat`} className='flex flex-col items-center justify-center gap-4 mt-16'>
+                <form className='flex flex-col items-center justify-center gap-4 mt-16' onSubmit={handleSubmit}>
                     <Select value={language} onValueChange={handleLanguageChange} required name="language">
                         <SelectTrigger className={cn("bg-transparent")}>
                             <SelectValue placeholder="Preferred Language" />

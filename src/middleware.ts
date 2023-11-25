@@ -61,7 +61,6 @@ export async function middleware(request: NextRequest) {
             sameSite: 'lax',
             secure: true,
         });
-        return response;
     }
 
     /* if (!request.cookies.get('token') && request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.includes('captain')) {
@@ -80,16 +79,15 @@ export async function middleware(request: NextRequest) {
             sameSite: 'lax',
             secure: true,
         });
-        return response;
     }
 
     if (pathnameHasLocale) return;
     // Redirect if there is no locale
-    const locale = getLocale(request)
+    const locale = getLocale(request);
     request.nextUrl.pathname = `/${locale}${pathname}`
     // e.g. incoming request is /products
     // The new URL is now /en-US/products
-    return Response.redirect(request.nextUrl);
+    return NextResponse.redirect(request.nextUrl);
 }
 
 export const config = {
