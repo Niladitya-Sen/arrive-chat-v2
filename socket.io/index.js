@@ -22,9 +22,22 @@ const io = new Server(server, {
     },
 });
 
+async function translate(text, to) {
+    const response = await fetch('https://ae.arrive.waysdatalabs.com/api/translate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text, to })
+    });
+    const data = await response.json();
+
+    return data.translated_text;
+}
+
 io.on("connection", (socket) => {
-    socket.on("bot_chat", ({ message }) => {
-        const responses = {
+    socket.on("bot_chat", async ({ message }) => {
+        /* const responses = {
             "How can I book a room?": "To book a room, you can visit our official website or call our reservation hotline. Our user-friendly online booking system allows you to choose your preferred dates, room type, and any additional amenities you might need.",
             "What types of rooms do you offer?": "We offer a variety of room types to cater to different preferences. Our options include standard rooms, suites, and deluxe rooms. Each is designed to provide comfort and meet the diverse needs of our guests.",
             "What are the room rates?": "Room rates vary based on factors such as room type, view, and the dates of your stay. For the most accurate and up-to-date rates, we recommend checking our website or contacting our reservations team.",
@@ -44,26 +57,29 @@ io.on("connection", (socket) => {
             "Can I request a late check-out?": "Late check-out requests are subject to availability. Please contact our front desk on the day of your departure to inquire about the possibility of a late check-out.",
             "What's your cancellation policy?": "Our cancellation policy varies depending on the type of reservation. For specific details, please refer to your confirmation email or contact our reservations team.",
             "Do you have a pool?": "Yes, we have a swimming pool available for our guests to enjoy. Relax and unwind by taking a refreshing dip in our inviting pool area."
-        };
+        }; */
 
-        /* const response = await fetch('https://ae.arrive.waysdatalabs.com/api/chat', {
+        const response = await fetch('https://ae.arrive.waysdatalabs.com/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ message })
-        }); */
+            body: JSON.stringify({ user_input: message })
+        });
+
+        const data = await response.json();
 
         socket.emit("bot_chat", {
             messages: [
-                responses[message] || "Sorry, I don't understand. Please try again."
+                /* responses[message] || "Sorry, I don't understand. Please try again." */
+                data.response
             ],
         })
 
     });
 
     socket.on("add-room-user", async ({ roomno, service }) => {
-        console.log(roomno, service);
+        /* console.log(roomno, service); */
 
         try {
             await sql.query`INSERT INTO services (room, service) VALUES (${roomno}, ${service})`;
@@ -77,7 +93,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("delete-room", async ({ roomno }) => {
-        console.log(roomno);
+        /* console.log(roomno); */
 
         try {
             await sql.query`DELETE FROM services WHERE room = ${roomno}`;
@@ -88,7 +104,7 @@ io.on("connection", (socket) => {
 
     socket.on("get-all-rooms-captain", async () => {
         const result = await sql.query("SELECT DISTINCT room FROM services");
-        console.log(result.recordset)
+        /* console.log(result.recordset) */
 
         socket.emit("get-all-rooms-captain", {
             rooms: result.recordset
@@ -96,22 +112,35 @@ io.on("connection", (socket) => {
     });
 
     socket.on('join-room', ({ roomno }) => {
-        console.log(roomno);
+        /* console.log(roomno); */
         socket.join(roomno);
     });
 
-    socket.on("send-message", async ({ roomno, message, messagedBy }) => {
-        console.log(roomno, message, messagedBy);
+    socket.on("send-message", async ({ roomno, message, messagedBy, language }) => {
+       /*  console.log(roomno, message, messagedBy, language); */
 
         if (messagedBy === 'captain') {
-
+            const result = await sql.query`SELECT language FROM customers c WHERE c.room_no = ${roomno}`;
+            /* console.log(result.recordset); */
+            const language = result.recordset[0].language;
+            message = await translate(message, language);
+            await sql.query`INSERT INTO messages_ (roomno, message, messagedBy) VALUES (${roomno}, ${message}, ${messagedBy})`;
+            socket.to(roomno).emit("receive-message", {
+                message,
+                messagedBy
+            });
+        } else if (messagedBy === 'customer') {
+            socket.to(roomno).emit("get-captain-language", message)
         }
+    });
 
-        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy) VALUES (${roomno}, ${message}, ${messagedBy})`;
-
-        socket.to(roomno).emit("receive-message", {
+    socket.on("captain-language", async ({ language, message, roomno }) => {
+        /* console.log(language, message); */
+        message = await translate(message, language);
+        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy) VALUES (${roomno}, ${message}, 'customer')`;
+        socket.emit("receive-message", {
             message,
-            messagedBy
+            messagedBy: 'customer'
         });
     });
 });
@@ -119,7 +148,7 @@ io.on("connection", (socket) => {
 app.get("/node-api/get-all-messages-by-room/:roomno", async (req, res) => {
     const { roomno } = req.params;
     const result = await sql.query`SELECT * FROM messages_ WHERE roomno = ${roomno}`;
-    console.log(result.recordset)
+    /* console.log(result.recordset) */
 
     res.json({
         success: true,
@@ -132,7 +161,7 @@ app.get("/node-api/get-services-by-room/:roomno", async (req, res) => {
 
     try {
         const result = await sql.query`SELECT service FROM services WHERE room = ${roomno}`;
-        console.log(result.recordset);
+        /* console.log(result.recordset); */
 
         res.json({
             success: true,
@@ -148,7 +177,7 @@ app.get("/node-api/get-rooms-by-service/:service", async (req, res) => {
 
     try {
         const result = await sql.query`SELECT room FROM services WHERE service = ${service}`;
-        console.log(result.recordset);
+        /* console.log(result.recordset); */
 
         res.json({
             success: true,

@@ -30,8 +30,6 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
         const data = Object.fromEntries(formData.entries())
-        console.log(data);
-        //TODO: api call to login and add jwt token to cookies
         const response = await fetch('https://ae.arrive.waysdatalabs.com/api/captain/auth/login', {
             method: 'POST',
             headers: {

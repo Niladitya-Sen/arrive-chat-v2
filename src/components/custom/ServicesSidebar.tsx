@@ -43,7 +43,6 @@ export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
         dialogRef.current?.close();
         const formData = new FormData(e.currentTarget);
         const data = Object.fromEntries(formData.entries());
-        console.log(data);
         const response = await fetch('https://ae.arrive.waysdatalabs.com/api/customer/add-roomno', {
             method: 'POST',
             headers: {
@@ -53,7 +52,6 @@ export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
             body: JSON.stringify(data),
         });
         const result = await response.json();
-        console.log(result);
         if (result.success) {
             cookies.setCookie('roomno', data.roomno as string, 365, '/');
             socket.emit('add-room-user', { roomno: data.roomno, service: "cab" });
@@ -111,7 +109,7 @@ export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
                             <Link
                                 key={index}
                                 href={{
-                                    pathname: `/${lang}/${service.link}`,
+                                    pathname: `/${lang}${service.link}`,
                                     query: {
                                         roomno: searchParams.get("roomno")
                                     },

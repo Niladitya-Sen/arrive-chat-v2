@@ -6,6 +6,6 @@ const socket = io("https://ae.arrive.waysdatalabs.com", {
 
 export default socket;
 
-// https://ae.arrive.waysdatalabs.com
+// http://localhost:3013
 
 // https://ae.arrive.waysdatalabs.com

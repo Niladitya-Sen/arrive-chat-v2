@@ -13,8 +13,18 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
     const pathname = usePathname();
 
     useEffect(() => {
-        const msg = message.endsWith('?') ? message.slice(0, -1) : message;
-        setAudioSrc(`https://ae.arrive.waysdatalabs.com/node-api/get-speech/${msg}?language=${params.lang}`);
+        async function getAudio() {
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-speech?language=${params.lang}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+            const audio = await response.blob();
+            setAudioSrc(URL.createObjectURL(audio));
+        }
+        getAudio();
     }, [message]);
 
     return (
@@ -45,7 +55,6 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                         className='bg-white/60 rounded-md py-1 w-full min-w-[5rem] hover:bg-white/100 transition-colors'
                         onClick={() => {
                             const roomno = cookies.getCookie('roomno');
-                            console.log(roomno);
                             if (roomno) {
                                 socket.emit('join-room', { roomno });
                                 socket.emit('send-message', { roomno, message: 'I want to book this service', messagedBy: 'customer' });
@@ -63,7 +72,7 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                     })}
                 >
                     <AiTwotoneSound
-                        className={`${(role === 'sender' || pathname.includes('captain') || pathname.includes('services')) && 'hidden'}`}
+                        className={`${(role === 'sender' || pathname.includes('captain') || pathname.includes('services')) && 'hidden'} cursor-pointer`}
                         onClick={() => {
                             if (audioRef.current) {
                                 audioRef.current.playbackRate = 1.25;

@@ -22,7 +22,6 @@ async function verifyToken(token: string) {
             },
         });
         const data = await response.json();
-        console.log(data);
         return data;
     } catch (err) {
         console.log(err);
@@ -32,18 +31,8 @@ async function verifyToken(token: string) {
 export async function middleware(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const token = searchParams.get('token');
-    console.log(await verifyToken(token as string));
     const creds = await verifyToken(token as string);
     const { pathname } = request.nextUrl;
-
-    const lang: { [key: string]: string } = {
-        English: 'en',
-        Arabic: 'ar',
-        Russian: 'ru',
-        French: 'fr',
-        German: 'de',
-        Spanish: 'es',
-    };
 
     const pathnameHasLocale = locales.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -58,7 +47,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(request.nextUrl);
 
     if (creds.success && creds.language) {
-        request.nextUrl.pathname = `/${lang[creds.language]}/chat`
+        request.nextUrl.pathname = `/${creds.language}/chat`
         const response = NextResponse.redirect(request.nextUrl);
         response.cookies.set('token', token ?? '', {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
@@ -66,7 +55,7 @@ export async function middleware(request: NextRequest) {
             sameSite: 'lax',
             secure: true,
         });
-        response.cookies.set('language', lang[creds.language], {
+        response.cookies.set('language', creds.language, {
             maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
             path: '/',
             sameSite: 'lax',
@@ -89,7 +78,7 @@ export async function middleware(request: NextRequest) {
             secure: true,
         });
         if (creds.language) {
-            response.cookies.set('language', lang[creds.language], {
+            response.cookies.set('language', creds.language, {
                 maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
                 path: '/',
                 sameSite: 'lax',

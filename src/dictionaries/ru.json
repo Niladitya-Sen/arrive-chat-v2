@@ -12,7 +12,8 @@
     },
     "chatPage": {
         "dialogBtn": "Забронировать сейчас",
-        "servicesH1": "Добро пожаловать в Arrive Chat"
+        "servicesH1": "Добро пожаловать в Arrive Chat",
+        "firstMsg": "Привет, я Arrive Chat. Как я могу вам помочь?"
     },
     "services": {
         "Cab/Taxi Service": "Служба такси",

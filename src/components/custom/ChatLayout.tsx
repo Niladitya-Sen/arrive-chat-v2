@@ -1,12 +1,13 @@
 "use client";
 
 import Image from 'next/image';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ChatBubble from './ChatBubble';
 import { IoPaperPlaneOutline } from 'react-icons/io5';
 import socket from '@/socket/socket';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useCookies } from '@/hooks/useCookies';
+import { getDictionary } from '@/app/[lang]/dictionaries';
 
 type MessageType = {
     message: string;
@@ -15,13 +16,20 @@ type MessageType = {
     type?: 'choice';
 }
 
-export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptain }: Readonly<{ isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: MessageType, isCaptain?: boolean }>) {
+export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptain, dict }: Readonly<{
+    isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: MessageType, isCaptain?: boolean, dict?: {
+        [key: string]: {
+            [key: string]: string;
+        };
+    }
+}>) {
     const chatAreaRef = React.useRef<HTMLDivElement>(null);
     const chatInputRef = React.useRef<HTMLInputElement>(null);
     const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [firstMessage] : []);
     const searchParams = useSearchParams();
     const cookies = useCookies();
     const pathname = usePathname();
+    const params = useParams();
 
     useEffect(() => {
         const roomno = cookies.getCookie('roomno');
@@ -42,7 +50,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     ), role: 'system'
                 },
                 {
-                    message: 'Hi, I am Arrive Bot. How can I help you?',
+                    message: dict?.chatPage?.firstMsg ?? "",
                     role: 'captain',
                     time: new Date().toLocaleTimeString(
                         'en-US',
@@ -83,7 +91,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     useEffect(() => {
         socket.on("bot_chat", (data) => {
             let m: { message: string; role: "captain"; time: string }[] = [];
-            console.log(data);
             data.messages.forEach((msg: any) => {
                 m.push({
                     message: msg,
@@ -127,7 +134,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 cache: 'no-store'
             });
             const result = await response.json();
-            console.log(result);
             if (result.success) {
                 let messages: MessageType[] = [];
                 for (const element of result.messages) {
@@ -181,11 +187,19 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
         if (localStorage.getItem('ac_ut') === 'captain' && searchParams.get("rno")) {
             getAllChatsByRoom(searchParams.get("rno"));
         } else if (cookies.getCookie('roomno') && !localStorage.getItem('ac_ut') && !pathname.endsWith('/chat')) {
-            console.log()
             getAllChatsByRoom(cookies.getCookie('roomno') ?? "");
-            console.log(cookies.getCookie('roomno'));
         }
     }, [searchParams.get("rno"), pathname]);
+
+    useEffect(() => {
+        socket.on("get-captain-language", (message) => {
+            socket.emit("captain-language", { language: params.lang, message, roomno: searchParams.get('rno') });
+        });
+
+        return () => {
+            socket.off("get-captain-language");
+        };
+    });
 
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -202,7 +216,8 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 socket.emit("send-message", {
                     roomno: searchParams.get('rno') ?? cookies.getCookie('roomno'),
                     message,
-                    messagedBy: isCaptainConnected ? 'customer' : 'captain'
+                    messagedBy: isCaptainConnected ? 'customer' : 'captain',
+                    language: params.lang,
                 });
             } else if (message.toLowerCase() === "hello" || message.toLowerCase() === "hi" || message.toLowerCase() === "hey") {
                 setMessages((prevMessages) => [...prevMessages,
@@ -216,7 +231,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 }
                 ]);
             } else if (!isCaptain) {
-                console.log("message", message);
                 socket.emit("bot_chat", { message });
             }
             chatInputRef.current.value = '';

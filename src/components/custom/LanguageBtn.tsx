@@ -35,19 +35,17 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const lang: { [key: string]: string } = {
-            en: 'English',
-            ar: 'Arabic',
-            ru: 'Russian',
-            fr: 'French',
-            de: 'German',
-            es: 'Spanish',
+        cookies.setCookie('language', language, 365, '/');
+        router.push(`/${language}/chat`);
+
+        if (searchParams.get('token') === null) {
+            return;
         }
 
         const response = await fetch('https://ae.arrive.waysdatalabs.com/api/language', {
             method: 'POST',
             body: JSON.stringify({
-                language: lang[language],
+                language: language,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -55,11 +53,6 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
             }
         });
         const result = await response.json();
-        console.log(result);
-        if (result.success) {
-            cookies.setCookie('language', language, 365, '/');
-            router.push(`/${language}/chat`);
-        }
     }
 
     return (

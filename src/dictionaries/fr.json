@@ -12,7 +12,8 @@
     },
     "chatPage": {
         "dialogBtn": "Réserver maintenant",
-        "servicesH1": "Bienvenue sur Arrive Chat"
+        "servicesH1": "Bienvenue sur Arrive Chat",
+        "firstMsg": "Salut, je suis Arrive Chat. Comment puis-je vous aider ?"
     },
     "services": {
         "Cab/Taxi Service": "Service de taxi",

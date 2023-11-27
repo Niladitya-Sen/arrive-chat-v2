@@ -58,7 +58,6 @@ export default function CaptainRoomsSidebar() {
 
     useEffect(() => {
         socket.on('add-room-captain', ({ roomno }: { roomno: string }) => {
-            console.log("first");
             //setRoomnumbers(prev => [...prev, roomno]);
             setRooms([...rooms, roomno]);
         });
