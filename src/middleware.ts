@@ -32,10 +32,18 @@ async function verifyToken(token: string) {
 export async function middleware(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const token = searchParams.get('token');
-    const lang = request.nextUrl.pathname.split('/')[1];
-    console.log(await verifyToken(token as string), lang);
+    console.log(await verifyToken(token as string));
     const creds = await verifyToken(token as string);
     const { pathname } = request.nextUrl;
+
+    const lang: { [key: string]: string } = {
+        English: 'en',
+        Arabic: 'ar',
+        Russian: 'ru',
+        French: 'fr',
+        German: 'de',
+        Spanish: 'es',
+    };
 
     const pathnameHasLocale = locales.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -47,7 +55,31 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname = `/${locale}${pathname}`
     // e.g. incoming request is /products
     // The new URL is now /en-US/products
-    const response =  NextResponse.redirect(request.nextUrl);
+    const response = NextResponse.redirect(request.nextUrl);
+
+    if (creds.success && creds.language) {
+        request.nextUrl.pathname = `/${lang[creds.language]}/chat`
+        const response = NextResponse.redirect(request.nextUrl);
+        response.cookies.set('token', token ?? '', {
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            path: '/',
+            sameSite: 'lax',
+            secure: true,
+        });
+        response.cookies.set('language', lang[creds.language], {
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            path: '/',
+            sameSite: 'lax',
+            secure: true,
+        });
+        response.cookies.set('roomno', creds.room_number, {
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            path: '/',
+            sameSite: 'lax',
+            secure: true,
+        });
+        return response;
+    }
 
     if (token && creds.success) {
         response.cookies.set('token', token, {
@@ -56,18 +88,22 @@ export async function middleware(request: NextRequest) {
             sameSite: 'lax',
             secure: true,
         });
-        response.cookies.set('language', creds.language, {
-            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
-            path: '/',
-            sameSite: 'lax',
-            secure: true,
-        });
-        response.cookies.set('roomno', creds.roomno, {
-            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
-            path: '/',
-            sameSite: 'lax',
-            secure: true,
-        });
+        if (creds.language) {
+            response.cookies.set('language', lang[creds.language], {
+                maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+                path: '/',
+                sameSite: 'lax',
+                secure: true,
+            });
+        }
+        if (creds.roomno) {
+            response.cookies.set('roomno', creds.room_number, {
+                maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+                path: '/',
+                sameSite: 'lax',
+                secure: true,
+            });
+        }
         return response;
     }
 
@@ -79,16 +115,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect('https://ae.arrive.waysdatalabs.com/captain');
     } */
 
-    if (lang) {
-        response.cookies.set('language', lang, {
-            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
-            path: '/',
-            sameSite: 'lax',
-            secure: true,
-        });
-        return response;
-    }
-    
     return response;
 }
 

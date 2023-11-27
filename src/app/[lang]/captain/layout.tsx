@@ -29,7 +29,7 @@ export default function CaptainLayout({ children, params: { lang } }: Readonly<{
     }
 
     return (
-        <section className='flex flex-col h-screen relative isolate'>
+        <section className='flex flex-col min-h-screen relative isolate'>
             <Alert className={cn('absolute top-5 left-5 w-fit bg-green-500 border-0 shadow-md transition-all -translate-x-96 opacity-0', {
                 "translate-x-0 opacity-100": isAlertOpen,
                 "bg-red-500": type === 'error',
@@ -56,7 +56,7 @@ export default function CaptainLayout({ children, params: { lang } }: Readonly<{
                 ) : (
                     <>
                         <ChatHeader />
-                        <div className={cn('grid grid-rows-[6rem_1fr] h-full sm:grid-cols-[8rem_2px_1fr] sm:grid-rows-[100%] text-black relative isolate bg-gradient-to-r from-[#eadec7] via-[#fcf8f0] to-[#eadec7]', {
+                        <div className={cn('grid grid-rows-[6rem_1fr] flex-1 sm:grid-cols-[8rem_2px_1fr] sm:grid-rows-[100%] text-black relative isolate bg-gradient-to-r from-[#eadec7] via-[#fcf8f0] to-[#eadec7]', {
                             'sm:grid-cols-[8rem_2px_1fr]': !isOpen,
                             'sm:grid-cols-[8rem_2px_160px_1fr]': !isOpen && isRoomOpen && pathname !== `/${lang}/captain/profile`,
                             'sm:grid-cols-[8rem_2px_300px_1fr]': isOpen,

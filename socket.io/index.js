@@ -46,11 +46,20 @@ io.on("connection", (socket) => {
             "Do you have a pool?": "Yes, we have a swimming pool available for our guests to enjoy. Relax and unwind by taking a refreshing dip in our inviting pool area."
         };
 
+        /* const response = await fetch('https://ae.arrive.waysdatalabs.com/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message })
+        }); */
+
         socket.emit("bot_chat", {
             messages: [
                 responses[message] || "Sorry, I don't understand. Please try again."
             ],
         })
+
     });
 
     socket.on("add-room-user", async ({ roomno, service }) => {
@@ -94,7 +103,12 @@ io.on("connection", (socket) => {
     socket.on("send-message", async ({ roomno, message, messagedBy }) => {
         console.log(roomno, message, messagedBy);
 
+        if (messagedBy === 'captain') {
+
+        }
+
         await sql.query`INSERT INTO messages_ (roomno, message, messagedBy) VALUES (${roomno}, ${message}, ${messagedBy})`;
+
         socket.to(roomno).emit("receive-message", {
             message,
             messagedBy
@@ -147,6 +161,24 @@ app.get("/node-api/get-rooms-by-service/:service", async (req, res) => {
 
 app.get("/node-api/get-speech/:message", (req, res) => {
     const { message } = req.params;
+    const { language } = req.query;
+
+    const langs = ['en', 'fr', 'ar', 'es', 'de', 'ru']
+
+    if (langs.includes(language)) {
+        const gtts = new gTTS(message, language ?? 'en');
+        res.setHeader('Content-Type', 'audio/mpeg');
+        gtts.stream().pipe(res);
+    } else {
+        res.json({
+            success: false,
+            message: "Language not supported"
+        });
+    }
+});
+
+app.post("/node-api/get-speech", (req, res) => {
+    const { message } = req.body;
     const { language } = req.query;
 
     const langs = ['en', 'fr', 'ar', 'es', 'de', 'ru']

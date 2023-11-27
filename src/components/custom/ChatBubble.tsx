@@ -1,6 +1,7 @@
 import { useCookies } from '@/hooks/useCookies';
 import { cn } from '@/lib/utils'
 import socket from '@/socket/socket'
+import { useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { AiTwotoneSound } from "react-icons/ai";
 
@@ -8,9 +9,12 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
     const cookies = useCookies();
     const [audioSrc, setAudioSrc] = useState('');
     const audioRef = useRef<HTMLAudioElement>(null);
+    const params = useParams();
+    const pathname = usePathname();
 
     useEffect(() => {
-        setAudioSrc(`https://ae.arrive.waysdatalabs.com/node-api/get-speech/${message}?language=${cookies.getCookie('language')}`);
+        const msg = message.endsWith('?') ? message.slice(0, -1) : message;
+        setAudioSrc(`https://ae.arrive.waysdatalabs.com/node-api/get-speech/${msg}?language=${params.lang}`);
     }, [message]);
 
     return (
@@ -59,7 +63,7 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                     })}
                 >
                     <AiTwotoneSound
-                        className={`${role === 'sender' && 'hidden'}`}
+                        className={`${(role === 'sender' || pathname.includes('captain') || pathname.includes('services')) && 'hidden'}`}
                         onClick={() => {
                             if (audioRef.current) {
                                 audioRef.current.playbackRate = 1.25;

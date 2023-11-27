@@ -8,12 +8,14 @@ import { LanguagesIcon } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import { useCookies } from '@/hooks/useCookies';
 
 export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
     const searchParams = useSearchParams();
     const [open, setOpen] = useState(false);
     const [language, setLanguage] = useState('en');
     const router = useRouter();
+    const cookies = useCookies();
 
     useEffect(() => {
         if (searchParams.get('token')) {
@@ -55,6 +57,7 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
         const result = await response.json();
         console.log(result);
         if (result.success) {
+            cookies.setCookie('language', language, 365, '/');
             router.push(`/${language}/chat`);
         }
     }

@@ -21,6 +21,14 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     const [messages, setMessages] = React.useState<MessageType[]>(firstMessage ? [firstMessage] : []);
     const searchParams = useSearchParams();
     const cookies = useCookies();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        const roomno = cookies.getCookie('roomno');
+        if (roomno) {
+            socket.emit('join-room', { roomno });
+        }
+    }, [pathname]);
 
     useEffect(() => {
         if (isBot) {
@@ -123,14 +131,47 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             if (result.success) {
                 let messages: MessageType[] = [];
                 for (const element of result.messages) {
-                    messages.push({
-                        message: element.message,
-                        role: element.messagedBy === localStorage.getItem('ac_ut') ? 'sender' : 'captain',
-                        time: new Date().toLocaleTimeString(
-                            'en-US',
-                            { hour: 'numeric', minute: 'numeric', hour12: true },
-                        )
-                    });
+                    if (localStorage.getItem('ac_ut') === 'captain') {
+                        if (element.messagedBy === localStorage.getItem('ac_ut')) {
+                            messages.push({
+                                message: element.message,
+                                role: 'sender',
+                                time: new Date().toLocaleTimeString(
+                                    'en-US',
+                                    { hour: 'numeric', minute: 'numeric', hour12: true },
+                                )
+                            });
+                        } else {
+                            messages.push({
+                                message: element.message,
+                                role: 'captain',
+                                time: new Date().toLocaleTimeString(
+                                    'en-US',
+                                    { hour: 'numeric', minute: 'numeric', hour12: true },
+                                )
+                            });
+                        }
+                    } else {
+                        if (element.messagedBy === 'captain') {
+                            messages.push({
+                                message: element.message,
+                                role: 'captain',
+                                time: new Date().toLocaleTimeString(
+                                    'en-US',
+                                    { hour: 'numeric', minute: 'numeric', hour12: true },
+                                )
+                            });
+                        } else {
+                            messages.push({
+                                message: element.message,
+                                role: 'sender',
+                                time: new Date().toLocaleTimeString(
+                                    'en-US',
+                                    { hour: 'numeric', minute: 'numeric', hour12: true },
+                                )
+                            });
+                        }
+                    }
                 }
                 if (messages.length !== 0) {
                     setMessages([...messages]);
@@ -139,11 +180,12 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
         }
         if (localStorage.getItem('ac_ut') === 'captain' && searchParams.get("rno")) {
             getAllChatsByRoom(searchParams.get("rno"));
-        } else if (cookies.getCookie('roomno') && !localStorage.getItem('ac_ut')) {
+        } else if (cookies.getCookie('roomno') && !localStorage.getItem('ac_ut') && !pathname.endsWith('/chat')) {
+            console.log()
             getAllChatsByRoom(cookies.getCookie('roomno') ?? "");
             console.log(cookies.getCookie('roomno'));
         }
-    }, [searchParams.get("rno")]);
+    }, [searchParams.get("rno"), pathname]);
 
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -183,7 +225,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     return (
         <section
-            className='relative isolate max-w-4xl w-full h-full mx-auto p-2 flex flex-col'
+            className='relative isolate max-w-4xl w-full h-screen mx-auto p-2 flex flex-col'
         >
             <div
                 ref={chatAreaRef}
