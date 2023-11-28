@@ -44,7 +44,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 cache: 'no-store'
             });
             const result = await response.json();
-            console.log(result.messages);
             if (result.success) {
                 let m: { message: string; role: "captain" | "sender"; time: string }[] = [];
                 result.messages.forEach((msg: any) => {
