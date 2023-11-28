@@ -4,6 +4,7 @@ import React from 'react'
 import { Button } from '../ui/button'
 import { useCookies } from '@/hooks/useCookies';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export default function DemoButton() {
     const cookies = useCookies();
@@ -18,11 +19,14 @@ export default function DemoButton() {
         localStorage.removeItem('ac_ut');
         router.push('/en/chat');
     }
-    
+
     return (
-        <Button 
-        className='absolute top-4 right-4 text-white'
-        onClick={handleClick}
-        >Demo</Button>
+        <Button
+            className={cn('absolute top-4 right-4 text-white text-center flex flex-col py-7')}
+            onClick={handleClick}
+        >
+            <p>Demo Now!</p>
+            <p>Aloft Palm Jumeirah</p>
+        </Button>
     )
 }
