@@ -1,13 +1,13 @@
 "use client";
 
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ChatBubble from './ChatBubble';
 import { IoPaperPlaneOutline } from 'react-icons/io5';
 import socket from '@/socket/socket';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useCookies } from '@/hooks/useCookies';
-import { getDictionary } from '@/app/[lang]/dictionaries';
+import useVoiceStore from '@/store/VoiceStore';
 
 type MessageType = {
     message: string;
@@ -30,6 +30,45 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     const cookies = useCookies();
     const pathname = usePathname();
     const params = useParams();
+    const voice = useVoiceStore(state => state);
+    const [audioSrc, setAudioSrc] = useState('');
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+        async function getBotChats() {
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-bot-messages-by-sessionId/${cookies.getCookie('sessionId')}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                cache: 'no-store'
+            });
+            const result = await response.json();
+            console.log(result.messages);
+            if (result.success) {
+                let m: { message: string; role: "captain" | "sender"; time: string }[] = [];
+                result.messages.forEach((msg: any) => {
+                    m.push({
+                        message: msg.message,
+                        role: msg.messagedBy === 'bot' ? 'captain' : 'sender',
+                        time: new Date().toLocaleTimeString(
+                            'en-US',
+                            { hour: 'numeric', minute: 'numeric', hour12: true },
+                        )
+                    })
+                });
+                if (m.length !== 0) {
+                    setMessages((prevMessages) => [...prevMessages, ...m]);
+                }
+            }
+        }
+        if (!cookies.getCookie('sessionId') && isBot) {
+            cookies.setCookie('sessionId', Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + Date.now(), 365, '/');
+        }
+        if (isBot) {
+            getBotChats();
+        }
+    }, []);
 
     useEffect(() => {
         const roomno = cookies.getCookie('roomno');
@@ -37,6 +76,45 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             socket.emit('join-room', { roomno });
         }
     }, [pathname]);
+
+    useEffect(() => {
+        async function getAudio() {
+            try {
+                const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-speech?language=${params.lang}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: messages[messages.length - 1].message })
+                });
+                const audio = await response.blob();
+                setAudioSrc(URL.createObjectURL(audio));
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (isBot && voice.state && messages[messages.length - 1].role !== 'sender') {
+            getAudio();
+        }
+    }, [voice.state, messages.length]);
+
+    useEffect(() => {
+        if (!voice.state) {
+            audioRef.current?.pause();
+            audioRef.current!.currentTime = 0;
+        }
+        if (audioRef.current && audioSrc && voice.state) {
+            audioRef.current.playbackRate = 1.25;
+            audioRef.current.play();
+        }
+    }, [audioSrc]);
+
+    useEffect(() => {
+        if (!voice.state) {
+            audioRef.current?.pause();
+            audioRef.current!.currentTime = 0;
+        }
+    }, [voice.state]);
 
     useEffect(() => {
         if (isBot) {
@@ -140,7 +218,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     if (localStorage.getItem('ac_ut') === 'captain') {
                         if (element.messagedBy === localStorage.getItem('ac_ut')) {
                             messages.push({
-                                message: element.message,
+                                message: element.translated_captain,
                                 role: 'sender',
                                 time: new Date().toLocaleTimeString(
                                     'en-US',
@@ -149,7 +227,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                             });
                         } else {
                             messages.push({
-                                message: element.message,
+                                message: element.translated_captain,
                                 role: 'captain',
                                 time: new Date().toLocaleTimeString(
                                     'en-US',
@@ -160,7 +238,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     } else {
                         if (element.messagedBy === 'captain') {
                             messages.push({
-                                message: element.message,
+                                message: element.translated_customer,
                                 role: 'captain',
                                 time: new Date().toLocaleTimeString(
                                     'en-US',
@@ -169,7 +247,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                             });
                         } else {
                             messages.push({
-                                message: element.message,
+                                message: element.translated_customer,
                                 role: 'sender',
                                 time: new Date().toLocaleTimeString(
                                     'en-US',
@@ -230,8 +308,8 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     )
                 }
                 ]);
-            } else if (!isCaptain) {
-                socket.emit("bot_chat", { message });
+            } else if (!isCaptain && isBot && cookies.getCookie('sessionId')) {
+                socket.emit("bot_chat", { message, sessionId: cookies.getCookie('sessionId') });
             }
             chatInputRef.current.value = '';
         }
@@ -241,6 +319,12 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
         <section
             className='relative isolate max-w-4xl w-full h-screen mx-auto p-2 flex flex-col'
         >
+            <audio
+                src={audioSrc}
+                ref={audioRef}
+                autoPlay={false}
+            />
+
             <div
                 ref={chatAreaRef}
                 className='flex-grow flex flex-col gap-2 overflow-y-auto h-full scrollbar-none'

@@ -36,7 +36,7 @@ async function translate(text, to) {
 }
 
 io.on("connection", (socket) => {
-    socket.on("bot_chat", async ({ message }) => {
+    socket.on("bot_chat", async ({ message, sessionId }) => {
         /* const responses = {
             "How can I book a room?": "To book a room, you can visit our official website or call our reservation hotline. Our user-friendly online booking system allows you to choose your preferred dates, room type, and any additional amenities you might need.",
             "What types of rooms do you offer?": "We offer a variety of room types to cater to different preferences. Our options include standard rooms, suites, and deluxe rooms. Each is designed to provide comfort and meet the diverse needs of our guests.",
@@ -68,6 +68,12 @@ io.on("connection", (socket) => {
         });
 
         const data = await response.json();
+
+        try {
+            await sql.query`INSERT INTO bot_messages (sessionId, message, messagedBy) VALUES (${sessionId}, ${message}, 'customer'), (${sessionId}, ${data.response}, 'bot')`;
+        } catch (err) {
+            console.log(err);
+        }
 
         socket.emit("bot_chat", {
             messages: [
@@ -117,16 +123,16 @@ io.on("connection", (socket) => {
     });
 
     socket.on("send-message", async ({ roomno, message, messagedBy, language }) => {
-       /*  console.log(roomno, message, messagedBy, language); */
+        /*  console.log(roomno, message, messagedBy, language); */
 
         if (messagedBy === 'captain') {
             const result = await sql.query`SELECT language FROM customers c WHERE c.room_no = ${roomno}`;
             /* console.log(result.recordset); */
             const language = result.recordset[0].language;
-            message = await translate(message, language);
-            await sql.query`INSERT INTO messages_ (roomno, message, messagedBy) VALUES (${roomno}, ${message}, ${messagedBy})`;
+            const translatedMessage = await translate(message, language);
+            await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, ${message}, ${messagedBy}, ${translatedMessage}, ${message})`;
             socket.to(roomno).emit("receive-message", {
-                message,
+                message: translatedMessage,
                 messagedBy
             });
         } else if (messagedBy === 'customer') {
@@ -136,10 +142,10 @@ io.on("connection", (socket) => {
 
     socket.on("captain-language", async ({ language, message, roomno }) => {
         /* console.log(language, message); */
-        message = await translate(message, language);
-        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy) VALUES (${roomno}, ${message}, 'customer')`;
+        const translatedMessage = await translate(message, language);
+        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, ${message}, 'customer', ${message}, ${translatedMessage})`;
         socket.emit("receive-message", {
-            message,
+            message: translatedMessage,
             messagedBy: 'customer'
         });
     });
@@ -223,6 +229,30 @@ app.post("/node-api/get-speech", (req, res) => {
         });
     }
 });
+
+app.get("/node-api/get-bot-messages-by-sessionId/:sessionId", async (req, res) => {
+    const { sessionId } = req.params;
+    const result = await sql.query`SELECT * FROM bot_messages WHERE sessionId = ${sessionId}`;
+    /* console.log(result.recordset) */
+
+    res.json({
+        success: true,
+        messages: result.recordset
+    });
+});
+
+/* app.post("/node-api/add-bot-message", async (req, res) => {
+    const { sessionId, message, messagedBy } = req.body;
+
+    try {
+        await sql.query`INSERT INTO bot_messages (sessionId, message, messagedBy) VALUES (${sessionId}, ${message}, ${messagedBy})`;
+        res.json({
+            success: true
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}); */
 
 server.listen(PORT, async () => {
     try {

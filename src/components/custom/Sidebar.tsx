@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { HiHome } from 'react-icons/hi2';
 import { BsFillBellFill } from 'react-icons/bs';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
@@ -11,6 +11,10 @@ import { CgClose } from 'react-icons/cg';
 import { HiMenuAlt2 } from 'react-icons/hi';
 import { FaPersonBooth } from 'react-icons/fa';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
+import { useCookies } from '@/hooks/useCookies';
+import { Dialog, DialogClose, DialogFooter, DialogHeader, DialogContent, DialogTitle } from '../ui/dialog';
+import { Button } from '../ui/button';
+
 
 export default function Sidebar({ children, dict, lang }: Readonly<{ children?: React.ReactNode, dict: { [key: string]: { [key: string]: string; }; }, lang: string }>) {
     const searchParams = useSearchParams();
@@ -20,6 +24,8 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
     const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
     const router = useRouter();
     const { Home, Notifications, Services } = dict.sidebar;
+    const cookies = useCookies();
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     return (
         <section
@@ -28,6 +34,18 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                 'hidden': !isOpen
             })}
         >
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className='text-white' >You are not a registered user.</DialogTitle>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <DialogClose>
+                            <Button>Close</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             <button
                 className='text-xl rounded-full bg-primary p-2 w-fit text-white self-end block sm:hidden'
                 onClick={toggleSidebar}
@@ -61,6 +79,10 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
             </Link>
             <button
                 onClick={() => {
+                    if (!cookies.getCookie('token')) {
+                        setDialogOpen(true);
+                        return;
+                    }
                     if (pathname.includes('services')) {
                         toggleSidebar();
                         toggleServicesSidebar();

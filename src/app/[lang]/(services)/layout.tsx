@@ -4,6 +4,7 @@ import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import React from 'react'
 import { getDictionary } from '../dictionaries'
+import Voice from '@/components/custom/Voice'
 
 export default async function ChatLayout({ children, params: { lang } }: Readonly<{ children: React.ReactNode, params: { lang: string } }>) {
     const dict = await getDictionary(lang);
@@ -15,6 +16,7 @@ export default async function ChatLayout({ children, params: { lang } }: Readonl
                 <Sidebar dict={dict} lang={lang} />
                 <Separator orientation='vertical' className={cn("w-[1.5px] bg-primary hidden sm:block")} />
                 {children}
+                <Voice />
             </div>
         </section>
     )

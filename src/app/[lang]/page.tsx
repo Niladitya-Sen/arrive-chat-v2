@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import LanguageBtn from '@/components/custom/LanguageBtn';
 import { getDictionary } from './dictionaries';
+import DemoButton from '@/components/custom/DemoButton';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -22,7 +23,8 @@ export default async function Home({ params: { lang } }: Readonly<{ params: { la
     const { h11, h12, h21, h22, starBox, rightBox, rightBox2, rightBoxBtn, languageBtn } = dict.landingPage;
 
     return (
-        <main className='bg-[url("/cover.jpg")] bg-cover bg-top bg-no-repeat'>
+        <main className='bg-[url("/cover.jpg")] bg-cover bg-top bg-no-repeat relative isolate'>
+            <DemoButton />
             <section className='bg-[#120f09] bg-opacity-90 flex flex-col p-4 pb-0 min-h-screen'>
                 <Navbar />
                 <section

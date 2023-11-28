@@ -1,32 +1,11 @@
 import { useCookies } from '@/hooks/useCookies';
 import { cn } from '@/lib/utils'
 import socket from '@/socket/socket'
-import { useParams, usePathname } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
-import { AiTwotoneSound } from "react-icons/ai";
+import React from 'react';
 
 export default function ChatBubble({ message, role, time, type }: Readonly<{ message: string, role: "sender" | "system" | "captain", time?: string, type?: "choice" }>) {
     const cookies = useCookies();
-    const [audioSrc, setAudioSrc] = useState('');
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const params = useParams();
-    const pathname = usePathname();
-
-    useEffect(() => {
-        async function getAudio() {
-            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-speech?language=${params.lang}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message })
-            });
-            const audio = await response.blob();
-            setAudioSrc(URL.createObjectURL(audio));
-        }
-        getAudio();
-    }, [message]);
-
+    
     return (
         <div
             className={cn("flex flex-row items-center gap-2", {
@@ -42,11 +21,6 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                     'rounded-bl-none bg-[#f3dfc5] text-primary-foreground': role === 'captain',
                 })}
             >
-                <audio
-                    src={audioSrc}
-                    ref={audioRef}
-                    autoPlay={false}
-                />
                 <p>{message}</p>
                 <div className={cn('hidden flex-row gap-2 w-full', {
                     'flex': type === 'choice'
@@ -71,15 +45,6 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                         'text-black/80': role === 'captain',
                     })}
                 >
-                    <AiTwotoneSound
-                        className={`${(role === 'sender' || pathname.includes('captain') || pathname.includes('services')) && 'hidden'} cursor-pointer`}
-                        onClick={() => {
-                            if (audioRef.current) {
-                                audioRef.current.playbackRate = 1.25;
-                                audioRef.current.play();
-                            }
-                        }}
-                    />
                     <p>{time}</p>
                 </div>
             </div>
