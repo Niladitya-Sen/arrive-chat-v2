@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
         const data = await response.json();
 
         try {
-            await sql.query`INSERT INTO bot_messages (sessionId, message, messagedBy) VALUES (${sessionId}, N${message}, 'customer'), (${sessionId}, N${data.response}, 'bot')`;
+            await sql.query`INSERT INTO bot_messages (sessionId, message, messagedBy) VALUES (${sessionId}, ${message}, 'customer'), (${sessionId}, ${data.response}, 'bot')`;
         } catch (err) {
             console.log(err);
         }
@@ -130,7 +130,7 @@ io.on("connection", (socket) => {
             /* console.log(result.recordset); */
             const language = result.recordset[0].language;
             const translatedMessage = await translate(message, language);
-            await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, N${message}, ${messagedBy}, N${translatedMessage}, N${message})`;
+            await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, ${message}, ${messagedBy}, ${translatedMessage}, ${message})`;
             socket.to(roomno).emit("receive-message", {
                 message: translatedMessage,
                 messagedBy
@@ -143,7 +143,7 @@ io.on("connection", (socket) => {
     socket.on("captain-language", async ({ language, message, roomno }) => {
         /* console.log(language, message); */
         const translatedMessage = await translate(message, language);
-        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, N${message}, 'customer', N${message}, N${translatedMessage})`;
+        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, ${message}, 'customer', ${message}, ${translatedMessage})`;
         socket.emit("receive-message", {
             message: translatedMessage,
             messagedBy: 'customer'
