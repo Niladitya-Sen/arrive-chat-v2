@@ -343,7 +343,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 onSubmit={addToMessages}
             >
                 <Image
-                    src="/smallGirl.png"
+                    src="/img/smallGirl.png"
                     alt="smallGirl"
                     width={50}
                     height={50}

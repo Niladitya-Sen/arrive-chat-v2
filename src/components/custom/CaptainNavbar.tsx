@@ -51,7 +51,7 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
                 <div className='w-[180px] invisible'></div>
                 <div className='flex flex-col items-center justify-center'>
                     <Image
-                        src="/arrivechat.png"
+                        src="/img/arrivechat.png"
                         alt="Arrive Chat"
                         width={202}
                         height={74}

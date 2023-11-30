@@ -43,7 +43,7 @@ export default async function CaptainHome({ params: { lang } }: { params: { lang
                     </div>
                     <div className='w-[32rem] h-[166px] bg-[#9b9b9a] absolute bottom-0 right-0 flex flex-row'>
                         <Image
-                            src="/bottomCard.jpg"
+                            src="/img/bottomCard.jpg"
                             width={166}
                             height={245}
                             alt='bottom card'

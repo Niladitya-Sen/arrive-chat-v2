@@ -7,7 +7,7 @@ export default function Navbar() {
             <nav className='text-white flex items-center justify-center'>
                 <div className='flex flex-col items-center justify-center'>
                     <Image
-                        src="/arrivechat.png"
+                        src="/img/arrivechat.png"
                         alt="Arrive Chat"
                         width={202}
                         height={74}
