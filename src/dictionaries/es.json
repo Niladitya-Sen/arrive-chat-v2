@@ -13,7 +13,9 @@
     "chatPage": {
         "dialogBtn": "Reservar ahora",
         "servicesH1": "Bienvenido a Arrive Chat",
-        "firstMsg": "Hola, soy Arrive Chat. ¿Cómo puedo ayudarte?"
+        "firstMsg": "Hola, soy Arrive Chat. ¿Cómo puedo ayudarte?",
+        "notRegisteredUser": "No eres un usuario registrado.",
+        "close": "Cerrar"
     },
     "services": {
         "Cab/Taxi Service": "Servicio de taxi",

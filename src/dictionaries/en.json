@@ -13,7 +13,9 @@
     "chatPage": {
         "dialogBtn": "Book Now",
         "servicesH1": "Welcome to Arrive Chat",
-        "firstMsg": "Hi, I am Arrive Chat. How can I help you?"
+        "firstMsg": "Hi, I am Arrive Chat. How can I help you?",
+        "notRegisteredUser": "You are not a registered user.",
+        "close": "Close"
     },
     "services": {
         "Cab/Taxi Service": "Cab/Taxi Service",

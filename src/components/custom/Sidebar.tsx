@@ -24,6 +24,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
     const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
     const router = useRouter();
     const { Home, Notifications, Services } = dict.sidebar;
+    const { notRegisteredUser, close } = dict.chatPage;
     const cookies = useCookies();
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -37,11 +38,11 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle className='text-white' >You are not a registered user.</DialogTitle>
+                        <DialogTitle className='text-white'>{notRegisteredUser}</DialogTitle>
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose>
-                            <Button>Close</Button>
+                            <Button>{close}</Button>
                         </DialogClose>
                     </DialogFooter>
                 </DialogContent>

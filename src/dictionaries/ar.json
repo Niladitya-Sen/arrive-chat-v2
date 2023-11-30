@@ -13,7 +13,9 @@
     "chatPage": {
         "dialogBtn": "احجز الآن",
         "servicesH1": "مرحبًا بك في Arrive Chat",
-        "firstMsg": "مرحبًا، أنا Arrive Chat. كيف يمكنني مساعدتك؟"
+        "firstMsg": "مرحبًا، أنا Arrive Chat. كيف يمكنني مساعدتك؟",
+        "notRegisteredUser": "أنت لست مستخدمًا مسجلًا.",
+        "close": "إغلاق"
     },
     "services": {
         "Cab/Taxi Service": "خدمة سيارات الأجرة / التاكسي",
