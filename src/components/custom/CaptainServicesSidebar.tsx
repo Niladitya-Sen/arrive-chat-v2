@@ -24,10 +24,7 @@ function CaptainServiceCard({ title, image, link }: Readonly<{ title: string, im
         <div className='w-full h-full rounded-2xl flex flex-col overflow-hidden relative isolate'>
             <Image
                 src={image}
-                alt={title}
-                loading='lazy'
-                priority={false}
-                placeholder='empty'
+                alt={"service"}
                 width={200}
                 height={200}
                 className='object-cover flex-grow w-full'

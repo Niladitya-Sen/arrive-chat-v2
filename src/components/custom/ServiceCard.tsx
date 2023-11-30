@@ -16,10 +16,7 @@ export default function ServiceCard({ title, image, dialogRef }: Readonly<{
         }}>
             <Image
                 src={image}
-                alt={title}
-                loading='lazy'
-                priority={false}
-                placeholder='empty'
+                alt={"service"}
                 width={200}
                 height={200}
                 className='object-cover flex-grow w-full'
