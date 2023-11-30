@@ -15,7 +15,8 @@
         "servicesH1": "Benvenuto su Arrive Chat",
         "firstMsg": "Ciao, sono Arrive Chat. Come posso aiutarti?",
         "notRegisteredUser": "Non sei un utente registrato.",
-        "close": "Chiudi"
+        "close": "Chiudi",
+        "bookThisService": "Vuoi prenotare questo servizio?"
     },
     "services": {
         "Cab/Taxi Service": "Servizio taxi",
