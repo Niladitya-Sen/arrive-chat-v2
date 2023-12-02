@@ -6,8 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LanguagesIcon } from 'lucide-react'
 import { cn } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useCookies } from '@/hooks/useCookies';
 
 export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
@@ -18,10 +17,10 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
     const cookies = useCookies();
 
     useEffect(() => {
-        if (searchParams.get('token')) {
+        if (searchParams.get('token') || searchParams.get('open') === 'dialog') {
             setOpen(true);
         }
-    }, [searchParams.get('token')]);
+    }, [searchParams.get('token'), searchParams.get('open')]);
 
     function handleLanguageChange(value: string) {
         setLanguage(value);

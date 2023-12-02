@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '../ui/button'
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog
 import Image from 'next/image'
 import { Input } from '../ui/input'
 import { Playfair_Display } from 'next/font/google'
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCookies } from '@/hooks/useCookies';
 
 const playfairDisplay = Playfair_Display({
@@ -25,6 +25,14 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
     const { login, name, preferred, employee, password, email, dialogH1 } = dict.captain;
     const params = useParams();
     const [lang, setLang] = useState(params.lang as string);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.get('open') === 'dialog') {
+            setDialogOpen(true);
+        }
+    }, [searchParams.get('open')]);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -60,7 +68,7 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
                     />
                     <p className='text-2xl'>وصول الدردشة</p>
                 </div>
-                <Dialog>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
                         <div
                             className={buttonVariants({

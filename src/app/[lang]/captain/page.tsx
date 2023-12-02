@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import CaptainNavbar from '@/components/custom/CaptainNavbar';
 import { getDictionary } from '../dictionaries';
+import Link from 'next/link';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -31,9 +32,9 @@ export default async function CaptainHome({ params: { lang } }: { params: { lang
                     <h1 className={`${playfairDisplay.className} text-center text-7xl`}>{h12}</h1>
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-8`}>{h21}</h2>
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-1`}>{h22}</h2>
-                    <button className='mt-8'>
+                    <Link href={"?open=dialog"} className='mt-8'>
                         <EllipseButton />
-                    </button>
+                    </Link>
                 </section>
                 <div className='flex-grow'></div>
                 <section className='hidden md:flex flex-row w-full justify-between items-end relative isolate'>

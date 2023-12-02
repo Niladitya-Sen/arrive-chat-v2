@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import LanguageBtn from '@/components/custom/LanguageBtn';
 import { getDictionary } from './dictionaries';
 import DemoButton from '@/components/custom/DemoButton';
+import Link from 'next/link';
+
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
@@ -17,7 +19,7 @@ const playfairDisplay = Playfair_Display({
     display: 'swap',
 });
 
-export default async function Home({ params: { lang } }: Readonly<{ params: { lang: string } }>) {
+export default async function Home({ params: { lang }, searchParams }: Readonly<{ params: { lang: string }, searchParams: { [key: string]: string } }>) {
     const dict = await getDictionary(lang);
 
     const { h11, h12, h21, h22, starBox, rightBox, rightBox2, rightBoxBtn, languageBtn } = dict.landingPage;
@@ -35,9 +37,9 @@ export default async function Home({ params: { lang } }: Readonly<{ params: { la
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-8`}>{h21}</h2>
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-1`}>{h22}</h2>
                     <LanguageBtn title={languageBtn} />
-                    <button className='mt-8'>
+                    <Link href={`?open=dialog${searchParams.token ? `&token=${searchParams.token}` : ""}`} className='mt-8'>
                         <EllipseButton />
-                    </button>
+                    </Link>
                 </section>
                 <div className='flex-grow'></div>
                 <section className='hidden md:flex flex-row w-full justify-between items-end relative isolate'>
