@@ -12,7 +12,7 @@ export default function Chat() {
 
     useEffect(() => {
         async function fetchServices() {
-            const response = await fetch(`http://localhost:3013/node-api/get-services-by-room/${searchParams.get('rno')}`, {
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-services-by-room/${searchParams.get('rno')}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

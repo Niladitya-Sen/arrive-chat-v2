@@ -10,7 +10,7 @@ import PhoneNoInput from '@/components/custom/PhoneNoInput';
 async function getCaptain() {
     const cookieStore = cookies();
     const token = cookieStore.get('ac_token');
-    const response = await fetch('http://localhost:3013/node-api/captain/get-captain', {
+    const response = await fetch('https://ae.arrive.waysdatalabs.com/node-api/captain/get-captain', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export default async function Profile({ params: { lang } }: Readonly<{ params: {
 
         const cookieStore = cookies();
         const token = cookieStore.get('ac_token');
-        const response = await fetch('http://localhost:3013/node-api/captain/update-captain', {
+        const response = await fetch('https://ae.arrive.waysdatalabs.com/node-api/captain/update-captain', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

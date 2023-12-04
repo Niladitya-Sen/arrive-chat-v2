@@ -46,7 +46,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         async function getBotChats() {
-            const response = await fetch(`http://localhost:3013/node-api/get-bot-messages-by-sessionId/${cookies.getCookie('sessionId')}`, {
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-bot-messages-by-sessionId/${cookies.getCookie('sessionId')}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     useEffect(() => {
         async function getAudio() {
             try {
-                const response = await fetch(`http://localhost:3013/node-api/get-speech?language=${params.lang}`, {
+                const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-speech?language=${params.lang}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -228,7 +228,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         async function getAllChatsByRoom(roomno: string | null) {
-            const response = await fetch(`http://localhost:3013/node-api/get-all-messages-by-room/${roomno}`, {
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-all-messages-by-room/${roomno}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
