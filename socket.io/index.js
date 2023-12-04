@@ -5,6 +5,7 @@ import http from 'http';
 import sql from 'mssql';
 import 'dotenv/config';
 import gTTS from 'gtts';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 
@@ -37,28 +38,6 @@ async function translate(text, to) {
 
 io.on("connection", (socket) => {
     socket.on("bot_chat", async ({ message, sessionId }) => {
-        /* const responses = {
-            "How can I book a room?": "To book a room, you can visit our official website or call our reservation hotline. Our user-friendly online booking system allows you to choose your preferred dates, room type, and any additional amenities you might need.",
-            "What types of rooms do you offer?": "We offer a variety of room types to cater to different preferences. Our options include standard rooms, suites, and deluxe rooms. Each is designed to provide comfort and meet the diverse needs of our guests.",
-            "What are the room rates?": "Room rates vary based on factors such as room type, view, and the dates of your stay. For the most accurate and up-to-date rates, we recommend checking our website or contacting our reservations team.",
-            "Are there any discounts available?": "Yes, we offer various discounts for early bookings, loyalty members, and special promotions. For detailed information on current discounts, please check our website or get in touch with our reservations team.",
-            "Can I cancel my reservation?": "Yes, you can cancel your reservation. Our cancellation policy allows for flexibility. You can manage your reservation by logging into your account on our website or by contacting our reservations team directly.",
-            "Tell me about your check-in/check-out process.": "Check-in time is at 3:00 PM, and check-out time is at 11:00 AM. If you require early check-in or late check-out, please let us know in advance, and we'll do our best to accommodate your request.",
-            "What amenities do the rooms have?": "Our rooms are equipped with modern amenities, including free Wi-Fi, TV, air conditioning, a minibar, and comfortable bedding. Feel free to contact our front desk for specific details or additional requests.",
-            "Is breakfast included in the room rate?": "Yes, breakfast is included in the room rate. We offer a complimentary breakfast buffet for our guests, featuring a variety of delicious options to start your day.",
-            "Do you have a gym or fitness center?": "Absolutely! We have a fully equipped gym and fitness center available for our guests. Maintain your workout routine during your stay with us.",
-            "Are pets allowed in the hotel?": "Yes, we are a pet-friendly hotel. We understand that pets are part of the family, so feel free to inform us in advance if you plan to bring your furry friend along.",
-            "How can I reach the hotel from the airport?": "You can reach the hotel from the airport by taking a taxi, using our shuttle service, or using public transportation. For detailed directions and transportation options, please contact us.",
-            "What's the Wi-Fi password?": "The Wi-Fi password for our hotel is 'Arrive123'. Enjoy complimentary high-speed internet access during your stay.",
-            "Do you offer room service?": "Yes, we offer room service for your convenience. You can find the room service menu in your room, offering a selection of delicious meals and snacks.",
-            "Is there parking available?": "Yes, we have parking available for our guests. Please note that there may be a fee depending on the type of parking.",
-            "Tell me about nearby attractions.": "Nearby attractions include parks, museums, and shopping centers. Our front desk can provide personalized recommendations based on your interests and preferences.",
-            "Are there any restaurants nearby?": "There are several restaurants within walking distance of the hotel, offering a variety of cuisines. Explore the local dining scene for a delightful culinary experience.",
-            "Can I request a late check-out?": "Late check-out requests are subject to availability. Please contact our front desk on the day of your departure to inquire about the possibility of a late check-out.",
-            "What's your cancellation policy?": "Our cancellation policy varies depending on the type of reservation. For specific details, please refer to your confirmation email or contact our reservations team.",
-            "Do you have a pool?": "Yes, we have a swimming pool available for our guests to enjoy. Relax and unwind by taking a refreshing dip in our inviting pool area."
-        }; */
-
         const response = await fetch('https://ae.arrive.waysdatalabs.com/api/chat', {
             method: 'POST',
             headers: {
@@ -70,14 +49,19 @@ io.on("connection", (socket) => {
         const data = await response.json();
 
         try {
-            await sql.query`INSERT INTO bot_messages (sessionId, message, messagedBy) VALUES (${sessionId}, ${message}, 'customer'), (${sessionId}, ${data.response}, 'bot')`;
+            await sql.query`INSERT INTO bot_messages (sessionId, message, messagedBy, time) VALUES (${sessionId}, ${message}, 'customer', ${new Date().toLocaleTimeString(
+                'en-US',
+                { hour: 'numeric', minute: 'numeric', hour12: true },
+            )}), (${sessionId}, ${data.response}, 'bot', ${new Date().toLocaleTimeString(
+                'en-US',
+                { hour: 'numeric', minute: 'numeric', hour12: true },
+            )})`;
         } catch (err) {
             console.log(err);
         }
 
         socket.emit("bot_chat", {
             messages: [
-                /* responses[message] || "Sorry, I don't understand. Please try again." */
                 data.response
             ],
         })
@@ -122,7 +106,7 @@ io.on("connection", (socket) => {
         socket.join(roomno);
     });
 
-    socket.on("send-message", async ({ roomno, message, messagedBy, language }) => {
+    socket.on("send-message", async ({ roomno, message, messagedBy, language, time }) => {
         /*  console.log(roomno, message, messagedBy, language); */
 
         if (messagedBy === 'captain') {
@@ -130,7 +114,7 @@ io.on("connection", (socket) => {
             /* console.log(result.recordset); */
             const language = result.recordset[0].language;
             const translatedMessage = await translate(message, language);
-            await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, ${message}, ${messagedBy}, ${translatedMessage}, ${message})`;
+            await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain, time) VALUES (${roomno}, ${message}, ${messagedBy}, ${translatedMessage}, ${message}, ${time})`;
             socket.to(roomno).emit("receive-message", {
                 message: translatedMessage,
                 messagedBy
@@ -143,7 +127,10 @@ io.on("connection", (socket) => {
     socket.on("captain-language", async ({ language, message, roomno }) => {
         /* console.log(language, message); */
         const translatedMessage = await translate(message, language);
-        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain) VALUES (${roomno}, ${message}, 'customer', ${message}, ${translatedMessage})`;
+        await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain, time) VALUES (${roomno}, ${message}, 'customer', ${message}, ${translatedMessage}, ${new Date().toLocaleTimeString(
+            'en-US',
+            { hour: 'numeric', minute: 'numeric', hour12: true },
+        )})`;
         socket.emit("receive-message", {
             message: translatedMessage,
             messagedBy: 'customer'
@@ -153,12 +140,17 @@ io.on("connection", (socket) => {
 
 app.get("/node-api/get-all-messages-by-room/:roomno", async (req, res) => {
     const { roomno } = req.params;
+    const result_ = await sql.query`SELECT DISTINCT date FROM messages_ m WHERE m.roomno = ${roomno};`;
     const result = await sql.query`SELECT * FROM messages_ WHERE roomno = ${roomno}`;
-    /* console.log(result.recordset) */
+
+    let arrangedResult = {};
+    for (let element of result_.recordset) {
+        arrangedResult[element.date] = result.recordset.filter((item) => item.date + "" === element.date + "");
+    }
 
     res.json({
         success: true,
-        messages: result.recordset
+        messages: arrangedResult
     });
 });
 
@@ -232,27 +224,59 @@ app.post("/node-api/get-speech", (req, res) => {
 
 app.get("/node-api/get-bot-messages-by-sessionId/:sessionId", async (req, res) => {
     const { sessionId } = req.params;
+    const result_ = await sql.query`SELECT DISTINCT date FROM bot_messages bm WHERE bm.sessionId = ${sessionId};`;
     const result = await sql.query`SELECT * FROM bot_messages WHERE sessionId = ${sessionId}`;
-    /* console.log(result.recordset) */
+
+    let arrangedResult = {};
+    for (let element of result_.recordset) {
+        arrangedResult[element.date] = result.recordset.filter((item) => item.date + "" === element.date + "");
+    }
 
     res.json({
         success: true,
-        messages: result.recordset
+        messages: arrangedResult
     });
 });
 
-/* app.post("/node-api/add-bot-message", async (req, res) => {
-    const { sessionId, message, messagedBy } = req.body;
+app.get("/node-api/captain/get-captain", async (req, res) => {
+    const authorization = req.headers.authorization;
+    const token = authorization.split(' ')[1];
+    console.log(token, authorization);
 
-    try {
-        await sql.query`INSERT INTO bot_messages (sessionId, message, messagedBy) VALUES (${sessionId}, ${message}, ${messagedBy})`;
-        res.json({
-            success: true
-        });
-    } catch (err) {
-        console.log(err);
-    }
-}); */
+    if (!token) return res.status(403).json({ success: false, message: "No token provided" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const { emp_id } = decoded;
+
+    const result = await sql.query`SELECT name, employee_id, email, language, phoneno FROM captain WHERE employee_id = ${emp_id}`;
+
+    res.json({
+        success: true,
+        captain: result.recordset[0]
+    });
+});
+
+app.post("/node-api/captain/update-captain", async (req, res) => {
+    const authorization = req.headers.authorization;
+    const token = authorization.split(' ')[1];
+    console.log(token, authorization);
+
+    if (!token) return res.status(403).json({ success: false, message: "No token provided" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const { emp_id } = decoded;
+
+    console.log(req.body);
+
+    const { name, employee_id, email, language, phoneno } = req.body;
+
+    const result = await sql.query`UPDATE captain SET name = ${name}, email = ${email}, language = ${language}, phoneno = ${phoneno} WHERE employee_id = ${emp_id}`;
+
+    res.json({
+        success: true,
+        message: "Captain updated successfully"
+    });
+});
 
 server.listen(PORT, async () => {
     try {

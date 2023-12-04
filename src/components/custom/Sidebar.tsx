@@ -66,7 +66,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                 <HiHome className='text-2xl' />
                 <p className='text-sm'>{Home}</p>
             </Link>
-            <Link
+            {/* <Link
                 href={{
                     pathname: `/${lang}/notifications`,
                     query: {
@@ -77,7 +77,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                 className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`)}>
                 <BsFillBellFill className='text-2xl' />
                 <p className='text-sm'>{Notifications}</p>
-            </Link>
+            </Link> */}
             <button
                 onClick={() => {
                     if (!cookies.getCookie('token')) {

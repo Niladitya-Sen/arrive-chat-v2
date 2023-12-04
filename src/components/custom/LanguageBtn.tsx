@@ -22,6 +22,12 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
         }
     }, [searchParams.get('token'), searchParams.get('open')]);
 
+    useEffect(() => {
+        if (!open) {
+            router.push(searchParams.get('token') ? '/?token=' + searchParams.get('token') : '/');
+        }
+    }, [open]);
+
     function handleLanguageChange(value: string) {
         setLanguage(value);
         if (value === 'ar') {
@@ -60,7 +66,7 @@ export default function LanguageBtn({ title }: Readonly<{ title: string }>) {
                 <button
                     className={buttonVariants({
                         variant: 'default',
-                        className: cn('cursor-pointer flex flex-row items-center justify-between gap-2 uppercase px-5 py-6 text-white mt-8 bg-transparent border-2 border-primary hover:bg-primary rounded-none')
+                        className: cn('cursor-pointer flex-row items-center justify-between gap-2 uppercase px-5 py-6 text-white mt-8 bg-transparent border-2 border-primary hover:bg-primary rounded-none hidden')
                     })}
                 >
                     <LanguagesIcon className='text-xl' />

@@ -16,7 +16,12 @@
         "firstMsg": "Hallo, ich bin Arrive Chat. Wie kann ich Ihnen helfen?",
         "notRegisteredUser": "Sie sind kein registrierter Benutzer.",
         "close": "Schließen",
-        "bookThisService": "Möchten Sie diesen Service buchen?"
+        "bookThisService": "Möchten Sie diesen Service buchen?",
+        "enterRoomNumber": "Bitte geben Sie Ihre Zimmernummer ein",
+        "startChatWithCaptain": "Lass uns mit dem Captain chatten",
+        "serviceRequests": "Serviceanfragen",
+        "signOut": "Abmelden",
+        "talkWithArriveChat": "Mit Arrive Chat sprechen"
     },
     "services": {
         "Cab/Taxi Service": "Taxi-Service",
@@ -34,7 +39,10 @@
         "Profile": "Profil",
         "Services": "Dienstleistungen",
         "Add Customer": "Kunden hinzufügen",
-        "Rooms": "Zimmer"
+        "Rooms": "Zimmer",
+        "confirmSignOut": "Möchten Sie sich wirklich abmelden?",
+        "yesSure": "Ja, sicher",
+        "notNow": "Nicht jetzt"
     },
     "captain": {
         "fname": "Vorname",

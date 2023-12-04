@@ -70,7 +70,7 @@ export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
                     className='flex flex-col'
                     onSubmit={handleSubmit}
                 >
-                    <h1 className='text-lg font-semibold leading-none tracking-tight mb-5'>Please enter your Room Number</h1>
+                    <h1 className='text-lg font-semibold leading-none tracking-tight mb-5'>{dict?.chatPage?.enterRoomNumber}</h1>
                     <Input
                         required
                         type="text"
@@ -80,7 +80,7 @@ export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
                     />
                     <Button
                         className={cn('text-white mt-2 w-fit self-end')}
-                    >Book Now</Button>
+                    >{dict?.chatPage?.startChatWithCaptain}</Button>
                 </form>
             </dialog>
             <section

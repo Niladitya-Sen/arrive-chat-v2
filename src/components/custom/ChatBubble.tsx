@@ -1,11 +1,7 @@
-import { useCookies } from '@/hooks/useCookies';
 import { cn } from '@/lib/utils'
-import socket from '@/socket/socket'
 import React from 'react';
 
 export default function ChatBubble({ message, role, time, type }: Readonly<{ message: string, role: "sender" | "system" | "captain", time?: string, type?: "choice" }>) {
-    const cookies = useCookies();
-    
     return (
         <div
             className={cn("flex flex-row items-center gap-2", {
@@ -22,24 +18,8 @@ export default function ChatBubble({ message, role, time, type }: Readonly<{ mes
                 })}
             >
                 <p>{message}</p>
-                <div className={cn('hidden flex-row gap-2 w-full', {
-                    'flex': type === 'choice'
-                })}>
-                    <button
-                        className='bg-white/60 rounded-md py-1 w-full min-w-[5rem] hover:bg-white/100 transition-colors'
-                        onClick={() => {
-                            const roomno = cookies.getCookie('roomno');
-                            if (roomno) {
-                                socket.emit('join-room', { roomno });
-                                socket.emit('send-message', { roomno, message: 'I want to book this service', messagedBy: 'customer' });
-                                window.location.reload();
-                            }
-                        }}
-                    >Yes</button>
-                    <button className='bg-white/60 rounded-md py-1 w-full min-w-[5rem] hover:bg-white/100 transition-colors'>No</button>
-                </div>
                 <div
-                    className={cn("text-xs self-end flex justify-between items-center w-full gap-2", {
+                    className={cn("text-xs self-end flex justify-end items-center w-full gap-2", {
                         'hidden': role === 'system',
                         'text-white/80': role === 'sender',
                         'text-black/80': role === 'captain',

@@ -59,7 +59,7 @@ export default function CaptainLayout({ children, params: { lang } }: Readonly<{
                         <div className={cn('grid grid-rows-[6rem_1fr] flex-1 sm:grid-cols-[8rem_2px_1fr] sm:grid-rows-[100%] text-black relative isolate bg-gradient-to-r from-[#eadec7] via-[#fcf8f0] to-[#eadec7]', {
                             'sm:grid-cols-[8rem_2px_1fr]': !isOpen,
                             'sm:grid-cols-[8rem_2px_160px_1fr]': !isOpen && isRoomOpen && pathname !== `/${lang}/captain/profile`,
-                            'sm:grid-cols-[8rem_2px_300px_1fr]': isOpen,
+                            'sm:grid-cols-[8rem_2px_300px_1fr]': isOpen && pathname !== `/${lang}/captain/profile`,
                             'sm:grid-cols-[8rem_2px_300px_160px_1fr]': isRoomOpen && isOpen && pathname !== `/${lang}/captain/profile`,
                         })}>
                             <CaptainSidebarToggleButton />

@@ -32,7 +32,7 @@ export default async function CaptainHome({ params: { lang } }: { params: { lang
                     <h1 className={`${playfairDisplay.className} text-center text-7xl`}>{h12}</h1>
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-8`}>{h21}</h2>
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-1`}>{h22}</h2>
-                    <Link href={"?open=dialog"} className='mt-8'>
+                    <Link href={"?open=dialog"} className='mt-8 relative isolate h-[5rem] flex items-center justify-center'>
                         <EllipseButton />
                     </Link>
                 </section>

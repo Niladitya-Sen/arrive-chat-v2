@@ -12,7 +12,7 @@ import { HiMenuAlt2 } from 'react-icons/hi';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import { useCaptainRoomSidebar } from '@/store/CaptainRoomSidebar';
 import { IoPersonAdd } from 'react-icons/io5';
-import { Dialog, DialogContent } from '../ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader } from '../ui/dialog';
 import { DialogClose, DialogTrigger } from '@radix-ui/react-dialog';
 import ChatHeader from './ChatHeader';
 import { Playfair_Display } from "next/font/google";
@@ -20,6 +20,10 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useAlertStore } from '@/store/AlertStore';
 import { getDictionary } from '@/app/[lang]/dictionaries';
+import { LuLogOut } from "react-icons/lu";
+import { useCookies } from '@/hooks/useCookies';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const playfair_Display = Playfair_Display({
     weight: "400",
@@ -55,6 +59,7 @@ export default function CaptainSidebar() {
     const { openAlert, closeAlert } = useAlertStore(state => state);
     const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
     const [dict, setDict] = useState<{ [key: string]: { [key: string]: string; }; }>({});
+    const cookies = useCookies();
 
     useEffect(() => {
         (async () => {
@@ -113,14 +118,14 @@ export default function CaptainSidebar() {
                         toggleSidebar();
                         toggleServicesSidebar();
                     } else {
-                        router.push(`/${params.lang}/captain/chat?language=${searchParams.get('language')}`)
+                        router.push(`/${params.lang}/captain/chat`)
                     }
                 }}
                 className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('services') ? 'text-primary' : 'text-black'}`)}>
                 <HiHome className='text-2xl' />
                 <p className='text-sm'>{dict?.sidebar?.Home}</p>
             </button>
-            <Link
+            {/* <Link
                 href={{
                     pathname: `/${params.lang}/captain/notifications`,
                     query: {
@@ -131,7 +136,7 @@ export default function CaptainSidebar() {
                 className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`)}>
                 <BsFillBellFill className='text-2xl' />
                 <p className='text-sm'>{dict?.sidebar?.Notifications}</p>
-            </Link>
+            </Link> */}
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
                 onClick={() => {
@@ -148,12 +153,17 @@ export default function CaptainSidebar() {
             </button>
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
-                onClick={toggleRoomSidebar}
+                onClick={() => {
+                    toggleRoomSidebar();
+                    if (!pathname.includes(`/${params.lang}/captain/chat`)) {
+                        router.push(`/${params.lang}/captain/chat`);
+                    }
+                }}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M14 6V21H3V19H5V3H14V4H19V19H21V21H17V6H14ZM10 11V13H12V11H10Z" fill="#615641" />
                 </svg>
-                <p className='text-sm text-primary'>{dict?.sidebar?.Rooms}</p>
+                <p className='text-sm text-primary'>{dict?.chatPage?.serviceRequests}</p>
             </button>
             <Dialog>
                 <DialogTrigger asChild>
@@ -208,6 +218,26 @@ export default function CaptainSidebar() {
                                 minLength={10}
                                 className='bg-transparent border-0 border-b-2 border-gray-500 rounded-none pl-0 font-semibold text-base'
                             />
+                            {/* <PhoneInput     
+                                country={'ae'}                           
+                                inputProps={{
+                                    required: true,
+                                    pattern: '[0-9]{10}',
+                                    maxLength: 10,
+                                    minLength: 10, 
+                                    name: 'phone_number',                                   
+                                }}
+                                containerClass='w-full bg-transparent !border-0 !border-b-2 !border-gray-500 !rounded-none pl-0 font-semibold text-base'
+                                inputClass='!bg-transparent !w-full py-[0.6rem] !border-0'
+                                specialLabel=''
+                                showDropdown
+                                dropdownClass='!bg-[#2f2f2f]'
+                                buttonStyle={{ 
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                }}
+                                countryCodeEditable={false}
+                            /> */}
                         </div>
                         <div className='w-full'>
                             <label htmlFor="checkin" className='text-sm'>{dict?.captain?.checkin}</label>
@@ -242,6 +272,41 @@ export default function CaptainSidebar() {
                     </form>
                 </DialogContent>
                 <DialogClose ref={dialogCloseRef} />
+            </Dialog>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <button className={`flex sm:flex-col gap-2 items-center -mt-6`}>
+                        <LuLogOut className="text-2xl text-primary" />
+                        <p className='text-sm text-primary'>{dict?.chatPage?.signOut}</p>
+                    </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <p className={`${playfair_Display.className} text-xl text-center mb-4`}>{dict?.sidebar?.confirmSignOut}</p>
+                    </DialogHeader>
+                    <DialogFooter className={cn('sm:justify-center')}>
+                        <div className='flex flex-col gap-2'>
+                            <Button type="button" variant="secondary" size="lg" className={cn('rounded-none border-2 border-primary')}
+                                onClick={() => {
+                                    localStorage.removeItem('ac_ut');
+                                    cookies.deleteCookie('language');
+                                    cookies.deleteCookie('token');
+                                    window.location.href = "/captain";
+                                }}
+                            >
+                                {dict?.sidebar?.yesSure}
+                            </Button>
+                            <Button type="button" variant="ghost" size="sm" className={cn('rounded-none')}
+                                onClick={() => {
+                                    dialogCloseRef.current?.click();
+                                }}
+                            >
+                                {dict?.sidebar?.notNow}
+                            </Button>
+                        </div>
+                        <DialogClose ref={dialogCloseRef} className="hidden"></DialogClose>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </section>
     )

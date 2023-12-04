@@ -19,7 +19,7 @@ const playfairDisplay = Playfair_Display({
     display: 'swap',
 });
 
-export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key: string]: string } } }) {
+export default function CaptainNavbar({ dict }: Readonly<{ dict: { [key: string]: { [key: string]: string } } }>) {
     const router = useRouter();
     const cookies = useCookies();
     const { login, name, preferred, employee, password, email, dialogH1 } = dict.captain;
@@ -34,6 +34,12 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
         }
     }, [searchParams.get('open')]);
 
+    useEffect(() => {
+        if (!dialogOpen) {
+            router.push("/captain");
+        }
+    }, [dialogOpen]);
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
@@ -47,7 +53,7 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
         });
         const result = await response.json();
         if (result.success) {
-            cookies.setCookie('ac_token', result.token, 365, '/captain');
+            cookies.setCookie('ac_token', result.token, 365, '/');
             localStorage.setItem('ac_ut', 'captain');
             router.push(`/${lang}/captain/chat`);
         }
@@ -116,16 +122,16 @@ export default function CaptainNavbar({ dict }: { dict: { [key: string]: { [key:
                                 required
                                 name="language"
                             >
-                                <SelectTrigger className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase')}>
+                                <SelectTrigger className={cn('bg-transparent border-0 border-b-2 border-white rounded-none pl-0 placeholder:text-white placeholder:uppercase uppercase')}>
                                     <SelectValue placeholder={preferred} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="en">English</SelectItem>
-                                    <SelectItem value="ar">Arabic</SelectItem>
-                                    <SelectItem value="ru">Russian</SelectItem>
-                                    <SelectItem value="fr">French</SelectItem>
-                                    <SelectItem value="de">German</SelectItem>
-                                    <SelectItem value="es">Spanish</SelectItem>
+                                    <SelectItem className='uppercase' value="en">English</SelectItem>
+                                    <SelectItem className='uppercase' value="ar">Arabic</SelectItem>
+                                    <SelectItem className='uppercase' value="ru">Russian</SelectItem>
+                                    <SelectItem className='uppercase' value="fr">French</SelectItem>
+                                    <SelectItem className='uppercase' value="de">German</SelectItem>
+                                    <SelectItem className='uppercase' value="es">Spanish</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Input

@@ -116,6 +116,18 @@
   --c4: hsl(36, 100%, 99%);
 }
 
-/* * {
-  background-color: rgba(30, 255, 0, 0.1);
-} */
+.country.highlight {
+  @apply !bg-primary-foreground;
+}
+
+.country:hover {
+  @apply !bg-primary-foreground;
+}
+
+.selected-flag.open {
+  @apply !bg-transparent;
+}
+
+.selected-flag:hover {
+  @apply !bg-transparent;
+}

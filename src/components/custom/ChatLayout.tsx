@@ -8,6 +8,8 @@ import socket from '@/socket/socket';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useCookies } from '@/hooks/useCookies';
 import useVoiceStore from '@/store/VoiceStore';
+import dayjs from 'dayjs';
+import { getDictionary } from '@/app/[lang]/dictionaries';
 
 type MessageType = {
     message: string;
@@ -33,10 +35,18 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     const voice = useVoiceStore(state => state);
     const [audioSrc, setAudioSrc] = useState('');
     const audioRef = useRef<HTMLAudioElement>(null);
+    const [dict1, setDict1] = useState<Record<string, Record<string, string>>>();
+
+    useEffect(() => {
+        async function getDict() {
+            setDict1(await getDictionary(params.lang as string));
+        }
+        getDict();
+    }, [])
 
     useEffect(() => {
         async function getBotChats() {
-            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-bot-messages-by-sessionId/${cookies.getCookie('sessionId')}`, {
+            const response = await fetch(`http://localhost:3013/node-api/get-bot-messages-by-sessionId/${cookies.getCookie('sessionId')}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -45,19 +55,27 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             });
             const result = await response.json();
             if (result.success) {
-                let m: { message: string; role: "captain" | "sender"; time: string }[] = [];
-                result.messages.forEach((msg: any) => {
+                let m: { message: string; role: "captain" | "sender" | "system"; time: string }[] = [];
+
+                for (const key in result.messages) {
                     m.push({
-                        message: msg.message,
-                        role: msg.messagedBy === 'bot' ? 'captain' : 'sender',
+                        message: dayjs(key).isSame(dayjs(), 'day') ? "Today" : dayjs(key).format('DD/MM/YYYY'),
+                        role: 'system',
                         time: new Date().toLocaleTimeString(
                             'en-US',
                             { hour: 'numeric', minute: 'numeric', hour12: true },
                         )
-                    })
-                });
+                    });
+                    for (const element of result.messages[key]) {
+                        m.push({
+                            message: element.message,
+                            role: element.messagedBy === 'bot' ? 'captain' : 'sender',
+                            time: element.time
+                        });
+                    }
+                }
                 if (m.length !== 0) {
-                    setMessages((prevMessages) => [...prevMessages, ...m]);
+                    setMessages([...m]);
                 }
             }
         }
@@ -74,12 +92,19 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
         if (roomno) {
             socket.emit('join-room', { roomno });
         }
+    }, [isCaptainConnected]);
+
+    useEffect(() => {
+        const roomno = cookies.getCookie('roomno');
+        if (roomno) {
+            socket.emit('join-room', { roomno });
+        }
     }, [pathname]);
 
     useEffect(() => {
         async function getAudio() {
             try {
-                const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-speech?language=${params.lang}`, {
+                const response = await fetch(`http://localhost:3013/node-api/get-speech?language=${params.lang}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -203,7 +228,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         async function getAllChatsByRoom(roomno: string | null) {
-            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-all-messages-by-room/${roomno}`, {
+            const response = await fetch(`http://localhost:3013/node-api/get-all-messages-by-room/${roomno}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -213,46 +238,44 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             const result = await response.json();
             if (result.success) {
                 let messages: MessageType[] = [];
-                for (const element of result.messages) {
-                    if (localStorage.getItem('ac_ut') === 'captain') {
-                        if (element.messagedBy === localStorage.getItem('ac_ut')) {
-                            messages.push({
-                                message: element.translated_captain,
-                                role: 'sender',
-                                time: new Date().toLocaleTimeString(
-                                    'en-US',
-                                    { hour: 'numeric', minute: 'numeric', hour12: true },
-                                )
-                            });
+                for (const key in result.messages) {
+                    messages.push({
+                        message: dayjs(key).isSame(dayjs(), 'day') ? "Today" : dayjs(key).format('DD/MM/YYYY'),
+                        role: 'system',
+                        time: new Date().toLocaleTimeString(
+                            'en-US',
+                            { hour: 'numeric', minute: 'numeric', hour12: true },
+                        )
+                    });
+                    for (const element of result.messages[key]) {
+                        if (localStorage.getItem('ac_ut') === 'captain') {
+                            if (element.messagedBy === localStorage.getItem('ac_ut')) {
+                                messages.push({
+                                    message: element.translated_captain,
+                                    role: 'sender',
+                                    time: element.time
+                                });
+                            } else {
+                                messages.push({
+                                    message: element.translated_captain,
+                                    role: 'captain',
+                                    time: element.time
+                                });
+                            }
                         } else {
-                            messages.push({
-                                message: element.translated_captain,
-                                role: 'captain',
-                                time: new Date().toLocaleTimeString(
-                                    'en-US',
-                                    { hour: 'numeric', minute: 'numeric', hour12: true },
-                                )
-                            });
-                        }
-                    } else {
-                        if (element.messagedBy === 'captain') {
-                            messages.push({
-                                message: element.translated_customer,
-                                role: 'captain',
-                                time: new Date().toLocaleTimeString(
-                                    'en-US',
-                                    { hour: 'numeric', minute: 'numeric', hour12: true },
-                                )
-                            });
-                        } else {
-                            messages.push({
-                                message: element.translated_customer,
-                                role: 'sender',
-                                time: new Date().toLocaleTimeString(
-                                    'en-US',
-                                    { hour: 'numeric', minute: 'numeric', hour12: true },
-                                )
-                            });
+                            if (element.messagedBy === 'captain') {
+                                messages.push({
+                                    message: element.translated_customer,
+                                    role: 'captain',
+                                    time: element.time
+                                });
+                            } else {
+                                messages.push({
+                                    message: element.translated_customer,
+                                    role: 'sender',
+                                    time: element.time
+                                });
+                            }
                         }
                     }
                 }
@@ -295,6 +318,10 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     message,
                     messagedBy: isCaptainConnected ? 'customer' : 'captain',
                     language: params.lang,
+                    time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
                 });
             } else if (message.toLowerCase() === "hello" || message.toLowerCase() === "hi" || message.toLowerCase() === "hey") {
                 setMessages((prevMessages) => [...prevMessages,
@@ -308,7 +335,9 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 }
                 ]);
             } else if (!isCaptain && isBot && cookies.getCookie('sessionId')) {
-                socket.emit("bot_chat", { message, sessionId: cookies.getCookie('sessionId') });
+                socket.emit("bot_chat", {
+                    message, sessionId: cookies.getCookie('sessionId')
+                });
             }
             chatInputRef.current.value = '';
         }
@@ -354,7 +383,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     type="text"
                     name="message"
                     id="message"
-                    placeholder='Talk with arrive chat'
+                    placeholder={dict1?.chatPage?.talkWithArriveChat ?? 'Talk with arrive chat'}
                     className='outline-none flex-grow mx-4 w-full'
                     autoComplete='off'
                 />

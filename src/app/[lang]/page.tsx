@@ -11,7 +11,6 @@ import { getDictionary } from './dictionaries';
 import DemoButton from '@/components/custom/DemoButton';
 import Link from 'next/link';
 
-
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],
     style: ['normal', 'italic'],
@@ -37,8 +36,11 @@ export default async function Home({ params: { lang }, searchParams }: Readonly<
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-8`}>{h21}</h2>
                     <h2 className={`${playfairDisplay.className} text-center text-xl mt-1`}>{h22}</h2>
                     <LanguageBtn title={languageBtn} />
-                    <Link href={`?open=dialog${searchParams.token ? `&token=${searchParams.token}` : ""}`} className='mt-8'>
-                        <EllipseButton />
+                    <Link
+                        href={`?open=dialog${searchParams.token ? `&token=${searchParams.token}` : ""}`}
+                        className='flex items-center justify-center mt-8 relative isolate h-[5rem]'
+                    >
+                        <EllipseButton title='Select Language' />
                     </Link>
                 </section>
                 <div className='flex-grow'></div>
