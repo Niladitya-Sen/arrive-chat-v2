@@ -11,8 +11,11 @@ export default function DemoButton() {
     const router = useRouter();
 
     function handleClick() {
-        const demoToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImtpZmFwaXcxMjFAZHBzb2xzLmNvbSIsImV4cCI6MTkyMjA1NDQwMH0.WiHFCamYOoqQbhzIG0vH7xHM-cx77-DAcSKjX8Tnk5o";
-        const demoRoomno = "demo5656";
+        cookies.deleteCookie('token');
+        cookies.deleteCookie('roomno');
+        cookies.deleteCookie('language');
+        const demoToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRpZG9kMjk2ODdAaHVwb2kuY29tIiwiZXhwIjoxOTIyNzQ1NjAwfQ.84zA_z1jxKb-2THoDdXNqc0w6OCRFSD1EZHbJ5stHvc";
+        const demoRoomno = "5656";
         cookies.setCookie('token', demoToken, 365, "/");
         cookies.setCookie('roomno', demoRoomno, 365, "/");
         cookies.setCookie('language', 'en', 365, "/");
