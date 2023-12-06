@@ -162,14 +162,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 {
                     message: dayjs().format('DD/MM/YYYY'),
                     role: 'system'
-                },
-                {
-                    message: 'Hello Captain.',
-                    role: 'captain',
-                    time: new Date().toLocaleTimeString(
-                        'en-US',
-                        { hour: 'numeric', minute: 'numeric', hour12: true },
-                    )
                 }
             ]);
         } /* else if (isCaptainConnected) {
