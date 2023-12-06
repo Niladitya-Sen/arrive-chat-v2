@@ -1,10 +1,22 @@
-import React from 'react'
-import ChatLayout from '@/components/custom/ChatLayout'
-import { getDictionary } from '@/app/[lang]/dictionaries'
+"use client";
 
-export default async function Service({ params }: Readonly<{ params: { slug: string, lang: string } }>) {
-    const dict = await getDictionary(params.lang);
-    const { bookThisService } = dict.chatPage;
+import React, { useEffect } from 'react';
+import ChatLayout from '@/components/custom/ChatLayout';
+import socket from '@/socket/socket';
+import { useCookies } from '@/hooks/useCookies';
+
+export default function Service({ params: { slug } }: Readonly<{ params: { slug: string } }>) {
+    const cookies = useCookies();
+
+    useEffect(() => {
+        socket.connect();
+        const roomno = cookies.getCookie('roomno');
+        if (roomno) {
+            socket.emit('join-room', { roomno });
+            socket.emit('add-room-user', { roomno: roomno, service: slug });
+        }
+    }, []);
+
     return (
         <ChatLayout isCaptainConnected />
     )

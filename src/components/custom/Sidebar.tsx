@@ -84,8 +84,8 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                         setDialogOpen(true);
                         return;
                     }
+                    toggleSidebar();
                     if (pathname.includes('services')) {
-                        toggleSidebar();
                         toggleServicesSidebar();
                     } else {
                         router.push(`/${lang}/services`);

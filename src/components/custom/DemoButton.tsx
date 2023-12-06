@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react'
-import { Button } from '../ui/button'
+import React from 'react';
+import { Button } from '../ui/button';
 import { useCookies } from '@/hooks/useCookies';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';

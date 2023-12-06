@@ -88,11 +88,8 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     }, []);
 
     useEffect(() => {
-        const roomno = cookies.getCookie('roomno');
-        if (roomno) {
-            socket.emit('join-room', { roomno });
-        }
-    }, [isCaptainConnected]);
+        setMessages([]);
+    }, [searchParams.get('rno')]);
 
     useEffect(() => {
         const roomno = cookies.getCookie('roomno');
@@ -146,10 +143,8 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
-                    message: new Date().toLocaleTimeString(
-                        'en-US',
-                        { hour: 'numeric', minute: 'numeric', hour12: true },
-                    ), role: 'system'
+                    message: dayjs().format('DD/MM/YYYY'),
+                    role: 'system'
                 },
                 {
                     message: dict?.chatPage?.firstMsg ?? "",
@@ -165,10 +160,8 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
-                    message: new Date().toLocaleTimeString(
-                        'en-US',
-                        { hour: 'numeric', minute: 'numeric', hour12: true },
-                    ), role: 'system'
+                    message: dayjs().format('DD/MM/YYYY'),
+                    role: 'system'
                 },
                 {
                     message: 'Hello Captain.',
@@ -179,9 +172,13 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     )
                 }
             ]);
-        } else if (isCaptainConnected) {
+        } /* else if (isCaptainConnected) {
             socket.connect();
-        }
+            const roomno = cookies.getCookie('roomno');
+            if (roomno) {
+                socket.emit('join-room', { roomno });
+            }
+        } */
     }, []);
 
     useEffect(() => {

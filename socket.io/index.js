@@ -72,11 +72,16 @@ io.on("connection", (socket) => {
         /* console.log(roomno, service); */
 
         try {
-            await sql.query`INSERT INTO services (room, service) VALUES (${roomno}, ${service})`;
+            const result = await sql.query`SELECT * FROM services WHERE room = ${roomno} AND service = ${service}`;
 
-            socket.broadcast.emit("add-room-captain", {
-                roomno
-            })
+            if (result.recordset.length === 0) {
+                await sql.query`INSERT INTO services (room, service) VALUES (${roomno}, ${service})`;
+
+                socket.broadcast.emit("add-room-captain", {
+                    roomno
+                })
+            }
+
         } catch (err) {
             console.log(err);
         }
@@ -112,7 +117,7 @@ io.on("connection", (socket) => {
         if (messagedBy === 'captain') {
             const result = await sql.query`SELECT language FROM customers c WHERE c.room_no = ${roomno}`;
             /* console.log(result.recordset); */
-            const language = result.recordset[0].language;
+            const language = result.recordset[0].language ?? 'en';
             const translatedMessage = await translate(message, language);
             await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain, time) VALUES (${roomno}, ${message}, ${messagedBy}, ${translatedMessage}, ${message}, ${time})`;
             socket.to(roomno).emit("receive-message", {

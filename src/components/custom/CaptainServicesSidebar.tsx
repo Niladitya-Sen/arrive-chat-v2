@@ -87,6 +87,11 @@ export default function CaptainServicesSidebar() {
                                 href={{
                                     pathname: `/${params.lang}/captain` + service?.link
                                 }}
+                                onClick={() => {
+                                    if (window.innerWidth < 768) {
+                                        toggleSidebar();
+                                    }
+                                }}
                             >
                                 <CaptainServiceCard
                                     image={service.image}

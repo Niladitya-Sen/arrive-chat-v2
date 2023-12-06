@@ -114,6 +114,11 @@ export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
                                         roomno: searchParams.get("roomno")
                                     },
                                 }}
+                                onClick={() => {
+                                    if (window.innerWidth < 768) {
+                                        toggleSidebar();
+                                    }
+                                }}
                             >
                                 <ServiceCard
                                     image={service.image}
