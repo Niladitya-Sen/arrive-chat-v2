@@ -25,11 +25,11 @@ export default function DemoButton() {
 
     return (
         <Button
-            className={cn('absolute top-4 right-4 text-white text-center flex flex-col py-7')}
+            className={cn('absolute right-1 top-4 sm:right-4 text-white text-center flex flex-col px-2 sm:px-5 py-5 sm:py-7')}
             onClick={handleClick}
         >
-            <p>Demo Now!</p>
-            <p>Aloft Palm Jumeirah</p>
+            <p className='text-sm sm:text-base'>Demo Now!</p>
+            <p className='hidden sm:block'>Aloft Palm Jumeirah</p>
         </Button>
     )
 }

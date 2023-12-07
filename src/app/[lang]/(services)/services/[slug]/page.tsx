@@ -4,9 +4,11 @@ import React, { useEffect } from 'react';
 import ChatLayout from '@/components/custom/ChatLayout';
 import socket from '@/socket/socket';
 import { useCookies } from '@/hooks/useCookies';
+import { useSelectedServiceStore } from '@/store/SelectedServiceStore';
 
 export default function Service({ params: { slug } }: Readonly<{ params: { slug: string } }>) {
     const cookies = useCookies();
+    const selectedService = useSelectedServiceStore(state => state.selectedService);
 
     useEffect(() => {
         socket.connect();
@@ -18,6 +20,12 @@ export default function Service({ params: { slug } }: Readonly<{ params: { slug:
     }, []);
 
     return (
-        <ChatLayout isCaptainConnected />
+        <ChatLayout
+            isCaptainConnected
+            firstMessage={{
+                message: selectedService ?? "",
+                role: 'system'
+            }}
+        />
     )
 }

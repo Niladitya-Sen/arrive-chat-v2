@@ -88,7 +88,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     }, []);
 
     useEffect(() => {
-        setMessages([]);
+        setMessages(firstMessage ? [firstMessage] : []);
     }, [searchParams.get('rno')]);
 
     useEffect(() => {
@@ -293,6 +293,10 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const message = chatInputRef.current?.value;
+        if (!cookies.getCookie("roomno") && localStorage.getItem('ac_ut') !== 'captain') {
+            (document.getElementById("roomno-dialog") as HTMLDialogElement).showModal();
+            return;
+        }
         if (message) {
             setMessages((prevMessages) => [...prevMessages, {
                 message, role: 'sender', time: new Date().toLocaleTimeString(

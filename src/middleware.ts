@@ -33,6 +33,11 @@ export async function middleware(request: NextRequest) {
     const token = searchParams.get('token');
     const creds = await verifyToken(token as string);
     const { pathname } = request.nextUrl;
+    const validateToken = await verifyToken(request.cookies.get('token')?.value as string);
+
+    if (!validateToken.success) {
+        request.cookies.delete('token');
+    }
 
     const pathnameHasLocale = locales.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
