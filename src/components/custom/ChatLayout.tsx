@@ -293,7 +293,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const message = chatInputRef.current?.value;
-        if (!cookies.getCookie("roomno") && localStorage.getItem('ac_ut') !== 'captain') {
+        if (!cookies.getCookie("roomno") && localStorage.getItem('ac_ut') !== 'captain' && pathname.includes("services")) {
             (document.getElementById("roomno-dialog") as HTMLDialogElement).showModal();
             return;
         }
