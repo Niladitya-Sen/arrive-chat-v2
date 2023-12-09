@@ -68,7 +68,7 @@ export default function CaptainRoomsSidebar() {
     });
 
     return (
-        <section className={cn('border-0 border-r-2 border-primary flex-col gap-2 items-center sm:w-full h-full overflow-y-auto scrollbar-none absolute z-[60] sm:relative w-[50%] bg-white sm:bg-transparent', {
+        <section className={cn('border-0 border-r-2 border-primary flex-col gap-2 items-center sm:w-full h-screen overflow-y-auto scrollbar-none absolute z-[60] sm:relative w-[50%] bg-white sm:bg-transparent', {
             'hidden': !isRoomOpen,
             'flex': isRoomOpen,
             'border-r-0 border-l-2 border-l-primary': params.lang === 'ar',
