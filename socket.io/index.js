@@ -86,14 +86,14 @@ io.on("connection", (socket) => {
     });
 
     socket.on("add-support-user", async ({ sessionId }) => {
-        /* console.log(roomno, service); */
-
+        console.log(sessionId);
         try {
             const result = await sql.query`SELECT customerName FROM support WHERE sessionId = ${sessionId}`;
+            console.log(result.recordset, sessionId);
             if (result.recordset.length > 0) {
                 socket.broadcast.emit("add-support-captain", {
                     sessionId,
-                    name: result.recordset[0].customerName
+                    customerName: result.recordset[0].customerName
                 })
             }
         } catch (err) {
@@ -148,7 +148,7 @@ io.on("connection", (socket) => {
         if (messagedBy === 'captain') {
             const result = await sql.query`SELECT language FROM customers c WHERE c.room_no = ${roomno}`;
             /* console.log(result.recordset); */
-            const language = result.recordset[0].language ?? 'en';
+            /* const language = result.recordset[0].language ?? 'en'; */
             const translatedMessage = await translate(message, language);
             if (type === 'cico') {
                 await sql.query`INSERT INTO messages_ (message, messagedBy, translated_customer, translated_captain, time, isRead, type, sessionId) VALUES (${message}, ${messagedBy}, ${translatedMessage}, ${message}, ${time}, 0, 'cico', ${sessionId})`;

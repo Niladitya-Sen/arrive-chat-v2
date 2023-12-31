@@ -92,9 +92,12 @@ export default function CaptainRoomsSidebar() {
     });
 
     useEffect(() => {
-        socket.on('add-support-captain', ({ roomno }: { roomno: SupportType }) => {
-            //setRoomnumbers(prev => [...prev, roomno]);
-            setSupport([...support, roomno]);
+        socket.on('add-support-captain', ({ sessionId, customerName }: SupportType) => {
+            //setRoomnumbers(prev => [...prev, roomno]);    
+            setSupport([...support, {
+                sessionId,
+                customerName
+            }]);
         });
 
         return () => {
