@@ -15,7 +15,7 @@ export default function Voice() {
     return (
         <button
             className={cn('absolute top-4 bg-primary/40 rounded-full text-lg p-4 hover:bg-primary/70 transition-colors', {
-                'hidden': pathname.includes('captain') || pathname.includes('services'),
+                'hidden': pathname !== `/${params.lang}/chat`,
                 'left-4': params.lang === 'ar',
                 'right-4': params.lang !== 'ar',
             })}

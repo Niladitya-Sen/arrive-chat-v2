@@ -21,7 +21,16 @@
         "startChatWithCaptain": "Начнем чат с капитаном",
         "serviceRequests": "Запросы на услуги",
         "signOut": "Выйти",
-        "talkWithArriveChat": "Общение с Arrive Chat"
+        "talkWithArriveChat": "Общение с Arrive Chat",
+        "selectSupportType": "Выберите тип поддержки.",
+        "checkIn": "Регистрация",
+        "checkOut": "Выписка",
+        "support": "Поддержка",
+        "clickForSupport": "Щелкните здесь для получения поддержки при регистрации или выписке.",
+        "confirmIdentity": "Пожалуйста, подтвердите свою личность.",
+        "fullName": "Полное имя",
+        "registeredEmail": "Зарегистрированный адрес электронной почты",
+        "roomNumber": "Номер комнаты"
     },
     "services": {
         "Cab/Taxi Service": "Служба такси",

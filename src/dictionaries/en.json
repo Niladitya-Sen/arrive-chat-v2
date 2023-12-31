@@ -21,7 +21,16 @@
         "startChatWithCaptain": "Let's start chat with Captain",
         "serviceRequests": "Service Requests",
         "signOut": "Sign Out",
-        "talkWithArriveChat": "Talk with Arrive Chat"
+        "talkWithArriveChat": "Talk with Arrive Chat",
+        "selectSupportType": "Select support type.",
+        "checkIn": "Check In",
+        "checkOut": "Check Out",
+        "support": "Support",
+        "clickForSupport": "Click here for check-in or check-out support.",
+        "confirmIdentity": "Please confirm your identity.",
+        "fullName": "Full Name",
+        "registeredEmail": "Registered Email",
+        "roomNumber": "Room Number"
     },
     "services": {
         "Cab/Taxi Service": "Cab/Taxi Service",

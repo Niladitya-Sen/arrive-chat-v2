@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import CheckDir from '@/components/custom/CheckDir'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children, params: { lang } }: Readonly<{ ch
       <body className={`${inter.className} max-w-screen-2xl mx-auto overflow-x-hidden`}>
         {/* <CheckDir /> */}
         {children}
+        <Toaster />
       </body>
     </html>
   )

@@ -30,8 +30,6 @@ export default async function Profile({ params: { lang } }: Readonly<{ params: {
     async function updateCaptain(formData: FormData) {
         "use server";
 
-        console.log(JSON.stringify(Object.fromEntries(formData.entries())));
-
         const cookieStore = cookies();
         const token = cookieStore.get('ac_token');
         const response = await fetch('https://ae.arrive.waysdatalabs.com/node-api/captain/update-captain', {

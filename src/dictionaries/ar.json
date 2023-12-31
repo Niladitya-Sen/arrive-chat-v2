@@ -21,7 +21,16 @@
         "startChatWithCaptain": "لنبدأ الدردشة مع الكابتن",
         "serviceRequests": "طلبات الخدمة",
         "signOut": "تسجيل الخروج",
-        "talkWithArriveChat": "الدردشة مع Arrive Chat"
+        "talkWithArriveChat": "الدردشة مع Arrive Chat",
+        "selectSupportType": "حدد نوع الدعم.",
+        "checkIn": "تسجيل الدخول",
+        "checkOut": "تسجيل الخروج",
+        "support": "الدعم",
+        "clickForSupport": "انقر هنا للحصول على دعم لتسجيل الدخول أو تسجيل الخروج.",
+        "confirmIdentity": "يرجى تأكيد هويتك.",
+        "fullName": "الاسم الكامل",
+        "registeredEmail": "البريد الإلكتروني المسجل",
+        "roomNumber": "رقم الغرفة"
     },
     "services": {
         "Cab/Taxi Service": "خدمة سيارات الأجرة / التاكسي",

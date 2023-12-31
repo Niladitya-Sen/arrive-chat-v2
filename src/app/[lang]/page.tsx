@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import LanguageBtn from '@/components/custom/LanguageBtn';
 import { getDictionary } from './dictionaries';
-import DemoButton from '@/components/custom/DemoButton';
 import Link from 'next/link';
+import DemoButton from '@/components/custom/DemoButton';
 
 const playfairDisplay = Playfair_Display({
     weight: ['400', '800'],

@@ -21,7 +21,16 @@
         "startChatWithCaptain": "Iniziamo la chat con il Capitano",
         "serviceRequests": "Richieste di servizio",
         "signOut": "Disconnessione",
-        "talkWithArriveChat": "Parla con Arrive Chat"
+        "talkWithArriveChat": "Parla con Arrive Chat",
+        "selectSupportType": "Seleziona il tipo di supporto.",
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "support": "Supporto",
+        "clickForSupport": "Fare clic qui per supporto check-in o check-out.",
+        "confirmIdentity": "Conferma la tua identità.",
+        "fullName": "Nome completo",
+        "registeredEmail": "Email registrata",
+        "roomNumber": "Numero di stanza"
     },
     "services": {
         "Cab/Taxi Service": "Servizio taxi",

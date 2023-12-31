@@ -24,6 +24,8 @@ import { LuLogOut } from "react-icons/lu";
 import { useCookies } from '@/hooks/useCookies';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import ToolTipProvider from './ToolTipProvider';
+import { MdOutlineSupportAgent } from 'react-icons/md';
 
 const playfair_Display = Playfair_Display({
     weight: "400",
@@ -52,7 +54,7 @@ export default function CaptainSidebar() {
     const pathname = usePathname();
     const params = useParams();
     const isOpen = useChatSidebarNavigation(state => state.isOpen);
-    const toggleRoomSidebar = useCaptainRoomSidebar(state => state.toggle);
+    const roomSideBar = useCaptainRoomSidebar(state => state);
     const toggleSidebar = useChatSidebarNavigation(state => state.toggle);
     const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
     const router = useRouter();
@@ -125,18 +127,15 @@ export default function CaptainSidebar() {
                 <HiHome className='text-2xl' />
                 <p className='text-sm'>{dict?.sidebar?.Home}</p>
             </button>
-            {/* <Link
+            <Link
                 href={{
-                    pathname: `/${params.lang}/captain/notifications`,
-                    query: {
-                        language: searchParams.get('language')
-                    }
+                    pathname: `/${params.lang}/captain/notifications`
                 }}
                 onClick={toggleSidebar}
                 className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('notifications') ? 'text-primary' : 'text-black'}`)}>
                 <BsFillBellFill className='text-2xl' />
-                <p className='text-sm'>{dict?.sidebar?.Notifications}</p>
-            </Link> */}
+                <p className='text-sm text-center'>{"SOS " + dict?.sidebar?.Notifications}</p>
+            </Link>
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
                 onClick={() => {
@@ -154,7 +153,12 @@ export default function CaptainSidebar() {
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
                 onClick={() => {
-                    toggleRoomSidebar();
+                    roomSideBar.open();                   
+
+                    if (searchParams.get('sb') === 'support') {
+                        router.push(`/${params.lang}/captain/chat`);
+                    }
+                    
                     if (!pathname.includes(`/${params.lang}/captain/chat`)) {
                         router.push(`/${params.lang}/captain/chat`);
                     }
@@ -165,6 +169,12 @@ export default function CaptainSidebar() {
                 </svg>
                 <p className='text-sm text-primary'>{dict?.chatPage?.serviceRequests}</p>
             </button>
+            <ToolTipProvider text='Check in or check out support'>
+                <Link href="?sb=support" onClick={() => { roomSideBar.open() }} className='text-center flex flex-col items-center justify-center text-primary'>
+                    <MdOutlineSupportAgent className='text-3xl' />
+                    <p>Support</p>
+                </Link>
+            </ToolTipProvider>
             <Dialog>
                 <DialogTrigger asChild>
                     <button className={`flex sm:flex-col gap-2 items-center text-primary text-sm`}>

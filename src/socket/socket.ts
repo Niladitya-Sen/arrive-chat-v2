@@ -1,8 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("https://ae.arrive.waysdatalabs.com", {
-    autoConnect: false
-});
+const socket = io("https://ae.arrive.waysdatalabs.com");
 
 export default socket;
 

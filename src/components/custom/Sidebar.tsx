@@ -12,8 +12,12 @@ import { HiMenuAlt2 } from 'react-icons/hi';
 import { FaPersonBooth } from 'react-icons/fa';
 import { useServicesSidebarNavigation } from '@/store/ServicesSidebarNavigation';
 import { useCookies } from '@/hooks/useCookies';
-import { Dialog, DialogClose, DialogFooter, DialogHeader, DialogContent, DialogTitle } from '../ui/dialog';
+import { Dialog, DialogClose, DialogFooter, DialogHeader, DialogContent, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Button } from '../ui/button';
+import { BiSupport } from "react-icons/bi";
+import ToolTipProvider from './ToolTipProvider';
+import { MdOutlineSupportAgent } from "react-icons/md";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 
 export default function Sidebar({ children, dict, lang }: Readonly<{ children?: React.ReactNode, dict: { [key: string]: { [key: string]: string; }; }, lang: string }>) {
@@ -24,7 +28,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
     const toggleServicesSidebar = useServicesSidebarNavigation(state => state.toggle);
     const router = useRouter();
     const { Home, Notifications, Services } = dict.sidebar;
-    const { notRegisteredUser, close } = dict.chatPage;
+    const { notRegisteredUser, close, support, selectSupportType, checkIn, checkOut, clickForSupport } = dict.chatPage;
     const cookies = useCookies();
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -96,6 +100,52 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                 <FaPersonBooth className='text-2xl' />
                 <p className='text-sm'>{Services}</p>
             </button>
+            <button
+                onClick={() => {
+                    if (!cookies.getCookie('token')) {
+                        setDialogOpen(true);
+                        return;
+                    }
+                    toggleSidebar();
+                    if (pathname.includes('sos')) {
+                        toggleServicesSidebar();
+                    } else {
+                        router.push(`/${lang}/sos`);
+                        toggleServicesSidebar();
+                    }
+                }}
+                className={cn(`flex sm:flex-col gap-2 items-center ${!pathname.includes('sos') ? 'text-primary' : 'text-black'}`)}>
+                <BiSupport className='text-2xl' />
+                <p className='text-sm'>{"SOS"}</p>
+            </button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <span>
+                        <ToolTipProvider text={clickForSupport}>
+                            <button className='text-center flex flex-col items-center justify-center text-primary'>
+                                <MdOutlineSupportAgent className='text-3xl' />
+                                <p>{support}</p>
+                            </button>
+                        </ToolTipProvider>
+                    </span>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className='mb-4'>{selectSupportType}</DialogTitle>
+                        <Select onValueChange={(value) => {
+                            router.push(`/${lang}/cico/auth/${value}`);
+                        }}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder={selectSupportType} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="check-in">{checkIn}</SelectItem>
+                                <SelectItem value="check-out">{checkOut}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
             {children}
         </section>
     )

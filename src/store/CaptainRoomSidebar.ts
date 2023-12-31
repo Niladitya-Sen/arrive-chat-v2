@@ -4,12 +4,14 @@ import { create } from 'zustand';
 
 type CaptainRoomSidebarState = {
     isOpen: boolean;
-    toggle: () => void;
+    open: () => void;
+    close: () => void;
 };
 
 export const useCaptainRoomSidebar = create<CaptainRoomSidebarState>(
     (set) => ({
         isOpen: false,
-        toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+        open: () => set({ isOpen: true }),
+        close: () => set({ isOpen: false }),
     })
 );

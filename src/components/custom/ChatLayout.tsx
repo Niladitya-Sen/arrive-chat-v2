@@ -18,8 +18,8 @@ type MessageType = {
     type?: 'choice';
 }
 
-export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptain, dict }: Readonly<{
-    isBot?: boolean, isCaptainConnected?: boolean, firstMessage?: MessageType, isCaptain?: boolean, dict?: {
+export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptain, dict, isSOS, isCICO }: Readonly<{
+    isBot?: boolean, isCaptainConnected?: boolean, isSOS?: boolean, isCICO?: boolean, firstMessage?: MessageType, isCaptain?: boolean, dict?: {
         [key: string]: {
             [key: string]: string;
         };
@@ -42,7 +42,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             setDict1(await getDictionary(params.lang as string));
         }
         getDict();
-    }, [])
+    }, []);
 
     useEffect(() => {
         async function getBotChats() {
@@ -93,8 +93,11 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         const roomno = cookies.getCookie('roomno');
-        if (roomno) {
+        const sessionId = cookies.getCookie('cico_sessionId');
+        if (roomno && !pathname.includes('cico')) {
             socket.emit('join-room', { roomno });
+        } else {
+            socket.emit('join-room', { roomno: sessionId });
         }
     }, [pathname]);
 
@@ -139,7 +142,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         if (isBot) {
-            socket.connect();
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
@@ -156,7 +158,6 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 }
             ]);
         } else if (isCaptain) {
-            socket.connect();
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
@@ -202,12 +203,15 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         socket.on("receive-message", ({ message }: { message: string }) => {
-            setMessages((prevMessages) => [...prevMessages, {
-                message, role: 'captain', time: new Date().toLocaleTimeString(
-                    'en-US',
-                    { hour: 'numeric', minute: 'numeric', hour12: true },
-                )
-            }]);
+
+            if (!pathname.includes("/captain/sos")) {
+                setMessages((prevMessages) => [...prevMessages, {
+                    message, role: 'captain', time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                }]);
+            }
         });
 
         return () => {
@@ -217,7 +221,15 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         async function getAllChatsByRoom(roomno: string | null) {
-            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/get-all-messages-by-room/${roomno}`, {
+            let path = "";
+            if (pathname.includes("sos")) {
+                path = "get-all-sos-messages-by-room";
+            } else if (searchParams.get("sb") === "support" || pathname.includes("cico")) {
+                path = "get-all-cico-messages-by-room";
+            } else {
+                path = "get-all-messages-by-room";
+            }
+            const response = await fetch(`https://ae.arrive.waysdatalabs.com/node-api/${path}/${roomno}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -225,6 +237,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 cache: 'no-store'
             });
             const result = await response.json();
+
             if (result.success) {
                 let messages: MessageType[] = [];
                 for (const key in result.messages) {
@@ -273,20 +286,48 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 }
             }
         }
-        if (localStorage.getItem('ac_ut') === 'captain' && searchParams.get("rno")) {
-            getAllChatsByRoom(searchParams.get("rno"));
+        if (searchParams.get("sb") === "support" && searchParams.get("rno")) {
+            getAllChatsByRoom(searchParams.get("rno") ?? "");
+        } else if (pathname.includes("cico") && cookies.getCookie('cico_sessionId')) {
+            getAllChatsByRoom(cookies.getCookie('cico_sessionId') ?? searchParams.get("rno") ?? "");
+        } else if (localStorage.getItem('ac_ut') === 'captain' && (searchParams.get("rno") || params.roomno)) {
+            getAllChatsByRoom(searchParams.get("rno") ?? params.roomno as string);
         } else if (cookies.getCookie('roomno') && !localStorage.getItem('ac_ut') && !pathname.endsWith('/chat')) {
             getAllChatsByRoom(cookies.getCookie('roomno') ?? "");
         }
     }, [searchParams.get("rno"), pathname]);
 
     useEffect(() => {
-        socket.on("get-captain-language", (message) => {
-            socket.emit("captain-language", { language: params.lang, message, roomno: searchParams.get('rno') });
+        socket.on("receive-sos-reply", ({ message }: { message: string }) => {
+            if (pathname === `/${params.lang}/sos`) {
+                setMessages((prevMessages) => [...prevMessages, {
+                    message, role: 'captain', time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                }]);
+            }
         });
 
         return () => {
-            socket.off("get-captain-language");
+            socket.off("receive-sos-reply");
+        };
+    });
+
+    useEffect(() => {
+        socket.on("receive-sos-message", ({ message }: { message: string }) => {
+            if (pathname === `/${params.lang}/captain/sos/${params.roomno}`) {
+                setMessages((prevMessages) => [...prevMessages, {
+                    message, role: 'captain', time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                }]);
+            }
+        });
+
+        return () => {
+            socket.off("receive-sos-message");
         };
     });
 
@@ -304,8 +345,31 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     { hour: 'numeric', minute: 'numeric', hour12: true },
                 )
             }]);
+            if (pathname === `/${params.lang}/captain/sos/${params.roomno}`) {
+                socket.emit("sos-reply", {
+                    roomno: params.roomno,
+                    message,
+                    messagedBy: 'captain',
+                    language: params.lang,
+                    time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                });
+            } else if (isSOS) {
 
-            if (isCaptain || isCaptainConnected) {
+                socket.emit("send-sos", {
+                    roomno: cookies.getCookie('roomno'),
+                    message,
+                    messagedBy: 'customer',
+                    language: params.lang,
+                    time: new Date().toLocaleTimeString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric', hour12: true },
+                    )
+                });
+            } else if (isCaptain || isCaptainConnected) {
+
                 socket.emit("send-message", {
                     roomno: searchParams.get('rno') ?? cookies.getCookie('roomno'),
                     message,
@@ -314,7 +378,9 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     time: new Date().toLocaleTimeString(
                         'en-US',
                         { hour: 'numeric', minute: 'numeric', hour12: true },
-                    )
+                    ),
+                    type: (isCICO || searchParams.get("sb") === "support") ? 'cico' : null,
+                    sessionId: cookies.getCookie('cico_sessionId') ?? searchParams.get('rno')
                 });
             } else if (message.toLowerCase() === "hello" || message.toLowerCase() === "hi" || message.toLowerCase() === "hey") {
                 setMessages((prevMessages) => [...prevMessages,
