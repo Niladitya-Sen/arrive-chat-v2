@@ -48,7 +48,7 @@ export default function CaptainRoomsSidebar() {
         } else if (pathname === `/${params.lang}/captain/chat`) {
             socket.emit('get-all-rooms-captain');
         }
-    }, [pathname]);
+    }, [pathname, sb]);
 
     useEffect(() => {
         socket.on("get-all-rooms-captain", ({ rooms }: { rooms: { room: string }[] }) => {

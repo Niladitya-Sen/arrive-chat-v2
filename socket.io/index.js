@@ -201,7 +201,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("send-sos", async ({ roomno, message, messagedBy, language, time }) => {
-       /*  console.log(roomno, message, messagedBy, language, time); */
+        /*  console.log(roomno, message, messagedBy, language, time); */
         socket.broadcast.emit("sos-notification", { message: "You have received a SOS message from a customer" });
         socket.broadcast.emit("get-captain-language", { message, type: 'sos', roomno })
     });
@@ -323,7 +323,7 @@ app.get("/node-api/get-bot-messages-by-sessionId/:sessionId", async (req, res) =
 app.get("/node-api/captain/get-captain", async (req, res) => {
     const authorization = req.headers.authorization;
     const token = authorization.split(' ')[1];
-   /*  console.log(token, authorization); */
+    /*  console.log(token, authorization); */
 
     if (!token) return res.status(403).json({ success: false, message: "No token provided" });
 
@@ -363,7 +363,7 @@ app.post("/node-api/captain/update-captain", async (req, res) => {
 app.get("/node-api/captain/get-sos-notifications", async (req, res) => {
     try {
         const notifications = await sql.query`SELECT * FROM messages_ WHERE type = 'sos' AND isRead = 0 ORDER BY timestamp DESC`;
-        
+
         const sortedNotifications = Object.groupBy(notifications.recordset, ({ roomno }) => roomno);
         const result = Object.keys(sortedNotifications).map((key) => {
             return {
@@ -435,7 +435,10 @@ app.post("/node-api/customer/auth", async (req, res) => {
                 message: "You are not a registered customer."
             });
         } else {
-            await sql.query`INSERT INTO support (type, customerName, sessionId) VALUES (${support}, ${name}, ${sessionId ?? roomno})`;
+            const check = await sql.query`SELECT * FROM support WHERE email = ${email}`;
+            if (check.recordset.length === 0) {
+                await sql.query`INSERT INTO support (type, customerName, sessionId, email) VALUES (${support}, ${name}, ${sessionId ?? roomno}, ${email})`;
+            }
             const token = jwt.sign({ sessionId: sessionId ?? roomno }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
             res.status(200).json({
                 success: true,

@@ -153,12 +153,12 @@ export default function CaptainSidebar() {
             <button
                 className={`flex sm:flex-col gap-2 items-center`}
                 onClick={() => {
-                    roomSideBar.open();                   
-
+                    roomSideBar.open();
+                    
                     if (searchParams.get('sb') === 'support') {
                         router.push(`/${params.lang}/captain/chat`);
                     }
-                    
+
                     if (!pathname.includes(`/${params.lang}/captain/chat`)) {
                         router.push(`/${params.lang}/captain/chat`);
                     }
@@ -170,7 +170,15 @@ export default function CaptainSidebar() {
                 <p className='text-sm text-primary'>{dict?.chatPage?.serviceRequests}</p>
             </button>
             <ToolTipProvider text='Check in or check out support'>
-                <Link href="?sb=support" onClick={() => { roomSideBar.open() }} className='text-center flex flex-col items-center justify-center text-primary'>
+                <Link href={{
+                    pathname: !pathname.includes(`/${params.lang}/captain/chat`) ? `/${params.lang}/captain/chat` : '',
+                    query: {
+                        sb: 'support'
+                    }
+                }}
+                    onClick={() => {
+                        roomSideBar.open()
+                    }} className='text-center flex flex-col items-center justify-center text-primary'>
                     <MdOutlineSupportAgent className='text-3xl' />
                     <p>Support</p>
                 </Link>
