@@ -116,6 +116,9 @@ export default function CaptainSidebar() {
             </button>
             <button
                 onClick={() => {
+                    if (searchParams.get("sb") === "support") {
+                        router.push(`/${params.lang}/captain/chat`)
+                    }
                     if (pathname.includes(`/${params.lang}/captain/chat`)) {
                         toggleSidebar();
                         toggleServicesSidebar();
