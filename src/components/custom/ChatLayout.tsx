@@ -205,7 +205,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         socket.on("receive-message", ({ message, roomno }: { message: string, roomno: string }) => {
-            if (!pathname.includes("/captain/sos") && (roomno === cookies.getCookie('roomno') || roomno === searchParams.get('rno'))) {
+            if (!pathname.includes("/captain/sos") && (roomno === cookies.getCookie('roomno') || roomno === searchParams.get('rno') || roomno === cookies.getCookie('cico_sessionId'))) {
                 setMessages((prevMessages) => [...prevMessages, {
                     message, role: 'captain', time: new Date().toLocaleTimeString(
                         'en-US',
