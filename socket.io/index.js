@@ -86,7 +86,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("add-support-user", async ({ sessionId }) => {
-        console.log(sessionId);
+        /* console.log(sessionId); */
         try {
             const result = await sql.query`SELECT customerName FROM support WHERE sessionId = ${sessionId}`;
             console.log(result.recordset, sessionId);
@@ -428,10 +428,10 @@ app.post("/node-api/customer/auth", async (req, res) => {
 
         if (roomno) {
             sessionId = roomno;
-            result = await sql.query`SELECT * FROM customers WHERE room_no = ${roomno} AND name = ${name} AND email = ${email}`;
+            result = await sql.query`SELECT * FROM customers WHERE room_no = ${roomno} AND email = ${email}`;
         } else {
             sessionId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + Date.now();
-            result = await sql.query`SELECT * FROM customers WHERE name = ${name} AND email = ${email}`;
+            result = await sql.query`SELECT * FROM customers WHERE email = ${email}`;
         }
 
         if (result.recordset.length === 0) {

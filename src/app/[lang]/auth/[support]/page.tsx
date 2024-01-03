@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useCookies } from '@/hooks/useCookies';
 import socket from '@/socket/socket';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { ImSpinner8 } from "react-icons/im";
+import { IoIosArrowRoundBack } from "react-icons/io";
 
 export default function Auth({ params: { lang, support } }: Readonly<{ params: { lang: string, support: string } }>) {
     const [loading, setLoading] = React.useState(false);
@@ -57,6 +59,10 @@ export default function Auth({ params: { lang, support } }: Readonly<{ params: {
 
     return (
         <main className='relative isolate bg-background h-screen flex flex-col items-center justify-center p-1'>
+            <Link href={`/${lang}/chat`} className='self-start flex items-center p-1 transition-colors hover:bg-white/30 rounded-[0.5rem]'>
+                <IoIosArrowRoundBack className="text-2xl" />  
+                <span className='text-sm'>back</span>              
+            </Link>
             {loading && <div className='absolute inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center cursor-wait'>
                 <ImSpinner8 className='animate-spin text-4xl text-white' />
             </div>}

@@ -10,6 +10,8 @@ import { useCookies } from '@/hooks/useCookies';
 import useVoiceStore from '@/store/VoiceStore';
 import dayjs from 'dayjs';
 import { getDictionary } from '@/app/[lang]/dictionaries';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 type MessageType = {
     message: string;
@@ -425,33 +427,38 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     />
                 ))}
             </div>
-            <form
-                className='sticky bottom-4 bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black my-4 sm:mb-0'
-                onSubmit={addToMessages}
-            >
-                <Image
-                    src="/img/smallGirl.png"
-                    alt="smallGirl"
-                    width={50}
-                    height={50}
-                    className='rounded-full min-w-[50px]'
-                />
-                <input
-                    ref={chatInputRef}
-                    type="text"
-                    name="message"
-                    id="message"
-                    placeholder={dict1?.chatPage?.talkWithArriveChat ?? 'Talk with arrive chat'}
-                    className='outline-none flex-grow mx-4 w-full'
-                    autoComplete='off'
-                />
-                <button
-                    type="submit"
-                    className='bg-white text-black rounded-full border-[1.25px] border-black p-3 text-2xl'
+            <div className='sticky bottom-4 isolate flex flex-col gap-1 my-4'>
+                <Link href={`/${params.lang}/sos`} className={cn('bg-[#897b61] rounded-full w-[3rem] h-[3rem] text-sm text-white hidden items-center justify-center', {
+                    'flex': !isSOS
+                })}>SOS</Link>
+                <form
+                    className='bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black sm:mb-0'
+                    onSubmit={addToMessages}
                 >
-                    <IoPaperPlaneOutline />
-                </button>
-            </form>
+                    <Image
+                        src="/img/smallGirl.png"
+                        alt="smallGirl"
+                        width={50}
+                        height={50}
+                        className='rounded-full min-w-[50px]'
+                    />
+                    <input
+                        ref={chatInputRef}
+                        type="text"
+                        name="message"
+                        id="message"
+                        placeholder={dict1?.chatPage?.talkWithArriveChat ?? 'Talk with arrive chat'}
+                        className='outline-none flex-grow mx-4 w-full'
+                        autoComplete='off'
+                    />
+                    <button
+                        type="submit"
+                        className='bg-white text-black rounded-full border-[1.25px] border-black p-3 text-2xl'
+                    >
+                        <IoPaperPlaneOutline />
+                    </button>
+                </form>
+            </div>
         </section>
     )
 }

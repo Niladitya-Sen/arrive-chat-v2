@@ -31,6 +31,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
     const { notRegisteredUser, close, support, selectSupportType, checkIn, checkOut, clickForSupport } = dict.chatPage;
     const cookies = useCookies();
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [supportDialogOpen, setSupportDialogOpen] = useState(false);
 
     return (
         <section
@@ -57,19 +58,16 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
             >
                 <CgClose />
             </button>
-            <Link
-                href={{
-                    pathname: `/${lang}/chat`,
-                    query: {
-                        language: searchParams.get('language')
-                    }
+            <button
+                onClick={() => {
+                    toggleSidebar();
+                    router.push(`/${lang}/chat`);
                 }}
-                onClick={toggleSidebar}
                 className={`flex sm:flex-col gap-2 items-center ${!pathname.includes('chat') ? 'text-primary' : 'text-black'}`}
             >
                 <HiHome className='text-2xl' />
                 <p className='text-sm'>{Home}</p>
-            </Link>
+            </button>
             {/* <Link
                 href={{
                     pathname: `/${lang}/notifications`,
@@ -102,7 +100,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
             </button>
             <button
                 onClick={() => {
-                    if (!cookies.getCookie('token')) {
+                    if (!cookies.getCookie('roomno') || !cookies.getCookie('token')) {
                         setDialogOpen(true);
                         return;
                     }
@@ -118,7 +116,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                 <BiSupport className='text-2xl' />
                 <p className='text-sm'>{"SOS"}</p>
             </button>
-            <Dialog>
+            <Dialog open={supportDialogOpen} onOpenChange={setSupportDialogOpen}>
                 <DialogTrigger asChild>
                     <span>
                         <ToolTipProvider text={clickForSupport}>
@@ -133,14 +131,21 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                     <DialogHeader>
                         <DialogTitle className='mb-4'>{selectSupportType}</DialogTitle>
                         <Select onValueChange={(value) => {
-                            router.push(`/${lang}/cico/auth/${value}`);
+                            setSupportDialogOpen(false);
+                            const supportType = cookies.getCookie('supportType');
+                            const cico_token = cookies.getCookie('cico_token');
+                            if (cico_token && supportType === value) {
+                                router.push(`/${lang}/cico/chat`);
+                                return;
+                            }
+                            router.push(`/${lang}/auth/${value}`);
                         }}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder={selectSupportType} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="check-in">{checkIn}</SelectItem>
-                                <SelectItem value="check-out">{checkOut}</SelectItem>
+                                <SelectItem className='cursor-pointer' value="check-in">{checkIn}</SelectItem>
+                                <SelectItem className='cursor-pointer' value="check-out">{checkOut}</SelectItem>
                             </SelectContent>
                         </Select>
                     </DialogHeader>
