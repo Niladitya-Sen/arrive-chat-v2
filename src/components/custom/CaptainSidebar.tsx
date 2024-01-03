@@ -181,7 +181,7 @@ export default function CaptainSidebar() {
                 }}
                     onClick={() => {
                         roomSideBar.open()
-                    }} className='text-center flex flex-col items-center justify-center text-primary'>
+                    }} className='text-center flex sm:flex-col items-center justify-center text-primary'>
                     <MdOutlineSupportAgent className='text-3xl' />
                     <p>Support</p>
                 </Link>

@@ -122,7 +122,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                 <DialogTrigger asChild>
                     <span>
                         <ToolTipProvider text={clickForSupport}>
-                            <button className='text-center flex flex-col items-center justify-center text-primary'>
+                            <button className='text-center flex sm:flex-col gap-2 items-center justify-center text-primary'>
                                 <MdOutlineSupportAgent className='text-3xl' />
                                 <p>{support}</p>
                             </button>
