@@ -54,6 +54,7 @@ export default function ServicesSidebar({ lang }: Readonly<{ lang: string }>) {
         const result = await response.json();
         if (result.success) {
             cookies.setCookie('roomno', data.roomno as string, 365, '/');
+            socket.emit('join-room', { roomno: data.roomno });
             socket.emit('add-room-user', { roomno: data.roomno, service: "cab" });
             router.push("?roomno=" + data.roomno);
         }

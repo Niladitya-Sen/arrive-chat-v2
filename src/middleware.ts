@@ -33,12 +33,7 @@ export async function middleware(request: NextRequest) {
     const token = searchParams.get('token');
     const creds = await verifyToken(token as string);
     const { pathname } = request.nextUrl;
-    const validateToken = await verifyToken(request.cookies.get('token')?.value as string);
-
-    if (!validateToken.success) {
-        request.cookies.delete('token');
-    }
-
+    
     const pathnameHasLocale = locales.some(
         (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
@@ -55,19 +50,19 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname = `/${creds.language}/chat`
         const response = NextResponse.redirect(request.nextUrl);
         response.cookies.set('token', token ?? '', {
-            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, 
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
         response.cookies.set('language', creds.language, {
-            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, 
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
         response.cookies.set('roomno', creds.room_number, {
-            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed,
             path: '/',
             sameSite: 'lax',
             secure: true,
@@ -77,14 +72,14 @@ export async function middleware(request: NextRequest) {
 
     if (token && creds.success) {
         response.cookies.set('token', token, {
-            maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+            maxAge: 60 * 60 * 24 * creds.num_days_stayed, 
             path: '/',
             sameSite: 'lax',
             secure: true,
         });
         if (creds.language) {
             response.cookies.set('language', creds.language, {
-                maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+                maxAge: 60 * 60 * 24 * creds.num_days_stayed, 
                 path: '/',
                 sameSite: 'lax',
                 secure: true,
@@ -92,7 +87,7 @@ export async function middleware(request: NextRequest) {
         }
         if (creds.roomno) {
             response.cookies.set('roomno', creds.room_number, {
-                maxAge: 60 * 60 * 24 * creds.num_days_stayed, // 1 year
+                maxAge: 60 * 60 * 24 * creds.num_days_stayed, 
                 path: '/',
                 sameSite: 'lax',
                 secure: true,

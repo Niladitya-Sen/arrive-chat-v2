@@ -25,7 +25,6 @@ export default function CaptainChatLayout({ children }: Readonly<{ children: Rea
 
     useEffect(() => {
         socket.on("get-captain-language", ({ message, type, roomno, sessionId }) => {
-
             socket.emit("captain-language", { language: params.lang, message, roomno: roomno, type, sessionId });
         });
 

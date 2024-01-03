@@ -20,7 +20,7 @@ const playfairDisplay = Playfair_Display({
 
 export default async function Home({ params: { lang }, searchParams }: Readonly<{ params: { lang: string }, searchParams: { [key: string]: string } }>) {
     const dict = await getDictionary(lang);
-
+    
     const { h11, h12, h21, h22, starBox, rightBox, rightBox2, rightBoxBtn, languageBtn } = dict.landingPage;
 
     return (

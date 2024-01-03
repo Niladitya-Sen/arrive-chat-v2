@@ -145,6 +145,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("send-message", async ({ roomno, message, messagedBy, language, time, type, sessionId }) => {
+        /* console.log(roomno, message, messagedBy, language, time, type, sessionId); */
         if (messagedBy === 'captain') {
             const result = await sql.query`SELECT language FROM customers c WHERE c.room_no = ${roomno}`;
             /* console.log(result.recordset); */
@@ -154,20 +155,22 @@ io.on("connection", (socket) => {
                 await sql.query`INSERT INTO messages_ (message, messagedBy, translated_customer, translated_captain, time, isRead, type, sessionId) VALUES (${message}, ${messagedBy}, ${translatedMessage}, ${message}, ${time}, 0, 'cico', ${sessionId})`;
                 socket.to(sessionId).emit("receive-message", {
                     message: translatedMessage,
-                    messagedBy
+                    messagedBy,
+                    roomno: sessionId
                 });
             } else {
                 await sql.query`INSERT INTO messages_ (roomno, message, messagedBy, translated_customer, translated_captain, time, isRead) VALUES (${roomno}, ${message}, ${messagedBy}, ${translatedMessage}, ${message}, ${time}, 0)`;
                 socket.to(roomno).emit("receive-message", {
                     message: translatedMessage,
-                    messagedBy
+                    messagedBy,
+                    roomno
                 });
             }
         } else if (messagedBy === 'customer') {
             if (type === 'cico') {
                 socket.broadcast.emit("get-captain-language", { message, type: 'cico', sessionId })
             } else {
-                socket.to(roomno).emit("get-captain-language", { message, type, sessionId })
+                socket.broadcast.emit("get-captain-language", { message, type, sessionId, roomno })
             }
         }
     });
@@ -190,12 +193,14 @@ io.on("connection", (socket) => {
         if (type === 'sos') {
             socket.emit("receive-sos-message", {
                 message: translatedMessage,
-                messagedBy: 'customer'
+                messagedBy: 'customer',
+                roomno
             });
         } else {
             socket.emit("receive-message", {
                 message: translatedMessage,
-                messagedBy: 'customer'
+                messagedBy: 'customer',
+                roomno
             });
         }
     });
