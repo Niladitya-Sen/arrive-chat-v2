@@ -429,7 +429,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
             </div>
             <div className='sticky bottom-4 isolate flex flex-col gap-1 my-4'>
                 <Link href={`/${params.lang}/sos`} className={cn('bg-[#897b61] rounded-full w-[3rem] h-[3rem] text-sm text-white hidden items-center justify-center', {
-                    'flex': !isSOS
+                    'flex': !isSOS && !pathname.includes('captain')
                 })}>SOS</Link>
                 <form
                     className='bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black sm:mb-0'
