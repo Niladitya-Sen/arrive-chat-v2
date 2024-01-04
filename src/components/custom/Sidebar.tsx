@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { HiHome } from 'react-icons/hi2';
 import { BsFillBellFill } from 'react-icons/bs';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
@@ -18,6 +18,8 @@ import { BiSupport } from "react-icons/bi";
 import ToolTipProvider from './ToolTipProvider';
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Input } from '../ui/input';
+import socket from '@/socket/socket';
 
 
 export default function Sidebar({ children, dict, lang }: Readonly<{ children?: React.ReactNode, dict: { [key: string]: { [key: string]: string; }; }, lang: string }>) {
@@ -32,6 +34,29 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
     const cookies = useCookies();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [supportDialogOpen, setSupportDialogOpen] = useState(false);
+    const dialogRef = useRef<HTMLDialogElement>(null);
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        dialogRef.current?.close();
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData.entries());
+        const response = await fetch('https://ae.arrive.waysdatalabs.com/api/customer/add-roomno', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + cookies.getCookie('token'),
+            },
+            body: JSON.stringify(data),
+        });
+        const result = await response.json();
+        if (result.success) {
+            cookies.setCookie('roomno', data.roomno as string, 365, '/');
+            socket.emit('join-room', { roomno: data.roomno });
+            socket.emit('add-room-user', { roomno: data.roomno, service: "cab" });
+            router.push("?roomno=" + data.roomno);
+        }
+    }
 
     return (
         <section
@@ -40,6 +65,29 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
                 'hidden': !isOpen
             })}
         >
+            <dialog
+                id="roomno-dialog"
+                ref={dialogRef}
+                className={cn('fixed inset-0 z-50 backdrop-blur-sm rounded-md w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full text-white backdrop:bg-black/80 backdrop:backdrop-blur-md')}
+                open={false}
+            >
+                <form
+                    className='flex flex-col'
+                    onSubmit={handleSubmit}
+                >
+                    <h1 className='text-lg font-semibold leading-none tracking-tight mb-5'>{dict?.chatPage?.enterRoomNumber}</h1>
+                    <Input
+                        required
+                        type="text"
+                        name="roomno"
+                        placeholder='Room Number'
+                        className='w-full p-2 border-2 border-gray-300 rounded-md'
+                    />
+                    <Button
+                        className={cn('text-white mt-2 w-fit self-end')}
+                    >{dict?.chatPage?.startChatWithCaptain}</Button>
+                </form>
+            </dialog>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
@@ -100,8 +148,11 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
             </button>
             <button
                 onClick={() => {
-                    if (!cookies.getCookie('roomno') || !cookies.getCookie('token')) {
+                    if (!cookies.getCookie('token')) {
                         setDialogOpen(true);
+                        return;
+                    } else if (!cookies.getCookie('roomno')) {
+                        (document.getElementById("roomno-dialog") as HTMLDialogElement).showModal();
                         return;
                     }
                     toggleSidebar();

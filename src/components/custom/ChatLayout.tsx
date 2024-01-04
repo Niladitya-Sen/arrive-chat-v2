@@ -5,12 +5,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import ChatBubble from './ChatBubble';
 import { IoPaperPlaneOutline } from 'react-icons/io5';
 import socket from '@/socket/socket';
-import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCookies } from '@/hooks/useCookies';
 import useVoiceStore from '@/store/VoiceStore';
 import dayjs from 'dayjs';
 import { getDictionary } from '@/app/[lang]/dictionaries';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 type MessageType = {
@@ -38,6 +37,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     const [audioSrc, setAudioSrc] = useState('');
     const audioRef = useRef<HTMLAudioElement>(null);
     const [dict1, setDict1] = useState<Record<string, Record<string, string>>>();
+    const router = useRouter();
 
     useEffect(() => {
         async function getDict() {
@@ -335,7 +335,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     function addToMessages(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const message = chatInputRef.current?.value;
-        if (!cookies.getCookie("roomno") && localStorage.getItem('ac_ut') !== 'captain' && pathname.includes("services")) {
+        if (!cookies.getCookie("roomno") && localStorage.getItem('ac_ut') !== 'captain' && (pathname.includes("services") || pathname.includes("sos"))) {
             (document.getElementById("roomno-dialog") as HTMLDialogElement).showModal();
             return;
         }
@@ -404,9 +404,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     }
 
     return (
-        <section
-            className='relative isolate max-w-4xl w-full h-screen mx-auto p-2 flex flex-col'
-        >
+        <section className='relative isolate max-w-4xl w-full h-screen mx-auto p-2 flex flex-col'>
             <audio
                 src={audioSrc}
                 ref={audioRef}
@@ -428,9 +426,18 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 ))}
             </div>
             <div className='sticky bottom-4 isolate flex flex-col gap-1 my-4'>
-                <Link href={`/${params.lang}/sos`} className={cn('bg-[#897b61] rounded-full w-[3rem] h-[3rem] text-sm text-white hidden items-center justify-center', {
-                    'flex': !isSOS && !pathname.includes('captain')
-                })}>SOS</Link>
+                <button
+                    className={cn('bg-[#897b61] rounded-full w-[3rem] h-[3rem] text-sm text-white hidden items-center justify-center', {
+                        'flex': !isSOS && !pathname.includes('captain')
+                    })}
+                    onClick={() => {
+                        if (!cookies.getCookie('roomno')) {
+                            (document.getElementById("roomno-dialog") as HTMLDialogElement).showModal();
+                            return;
+                        }
+                        router.push(`/${params.lang}/sos`);
+                    }}
+                >SOS</button>
                 <form
                     className='bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black sm:mb-0'
                     onSubmit={addToMessages}

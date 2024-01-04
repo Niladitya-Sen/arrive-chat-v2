@@ -5,15 +5,14 @@ import { useSelectedServiceStore } from '@/store/SelectedServiceStore';
 import Image from 'next/image'
 import React from 'react'
 
-export default function ServiceCard({ title, image, dialogRef }: Readonly<{
-    title: string, image: string, dialogRef: React.RefObject<HTMLDialogElement>
-}>) {
+export default function ServiceCard({ title, image }: Readonly<{
+    title: string, image: string }>) {
     const cookies = useCookies();
     const serviceStore = useSelectedServiceStore();
     return (
         <div className='w-full h-full rounded-2xl flex flex-col overflow-hidden' onClick={() => {
             if (!cookies.getCookie("roomno")) {
-                dialogRef.current?.showModal();
+                (document.getElementById("roomno-dialog") as HTMLDialogElement).showModal();
             }
             serviceStore.setSelectedService(title);
         }}>
