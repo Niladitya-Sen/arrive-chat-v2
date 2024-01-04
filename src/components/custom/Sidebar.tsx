@@ -20,6 +20,7 @@ import { MdOutlineSupportAgent } from "react-icons/md";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Input } from '../ui/input';
 import socket from '@/socket/socket';
+import { useSOSStore } from '@/store/SOSStore';
 
 
 export default function Sidebar({ children, dict, lang }: Readonly<{ children?: React.ReactNode, dict: { [key: string]: { [key: string]: string; }; }, lang: string }>) {
@@ -35,6 +36,7 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [supportDialogOpen, setSupportDialogOpen] = useState(false);
     const dialogRef = useRef<HTMLDialogElement>(null);
+    const SOS = useSOSStore(state => state);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -54,7 +56,12 @@ export default function Sidebar({ children, dict, lang }: Readonly<{ children?: 
             cookies.setCookie('roomno', data.roomno as string, 365, '/');
             socket.emit('join-room', { roomno: data.roomno });
             socket.emit('add-room-user', { roomno: data.roomno, service: "cab" });
-            router.push("?roomno=" + data.roomno);
+            if (SOS.sos) {
+                router.push(`/${lang}/sos`);
+            } else {
+                router.push("?roomno=" + data.roomno);
+            }
+            SOS.setSOS(false);
         }
     }
 

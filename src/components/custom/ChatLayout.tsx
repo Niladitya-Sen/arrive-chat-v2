@@ -11,6 +11,7 @@ import useVoiceStore from '@/store/VoiceStore';
 import dayjs from 'dayjs';
 import { getDictionary } from '@/app/[lang]/dictionaries';
 import { cn } from '@/lib/utils';
+import { useSOSStore } from '@/store/SOSStore';
 
 type MessageType = {
     message: string;
@@ -38,6 +39,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     const audioRef = useRef<HTMLAudioElement>(null);
     const [dict1, setDict1] = useState<Record<string, Record<string, string>>>();
     const router = useRouter();
+    const SOS = useSOSStore(state => state);
 
     useEffect(() => {
         async function getDict() {
@@ -432,6 +434,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     })}
                     onClick={() => {
                         if (!cookies.getCookie('roomno')) {
+                            SOS.setSOS(true);
                             (document.getElementById("roomno-dialog") as HTMLDialogElement).showModal();
                             return;
                         }
