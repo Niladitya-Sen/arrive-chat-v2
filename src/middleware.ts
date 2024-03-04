@@ -30,8 +30,8 @@ async function verifyToken(token: string) {
 
 export async function middleware(request: NextRequest) {
 
-    if (request.nextUrl.host === "ae.aloft.arrivechat.com") {
-        return NextResponse.redirect('https://ae.aloft.arrivechat.com/en/chat');
+    if (request.nextUrl.host === "ae.aloft.arrivechat.com" && request.nextUrl.pathname === "/") {
+        return NextResponse.redirect('http://ae.aloft.arrivechat.com/en/chat');
     }
 
     const { searchParams } = request.nextUrl;
