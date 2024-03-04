@@ -29,12 +29,6 @@ async function verifyToken(token: string) {
 }
 
 export async function middleware(request: NextRequest) {
-    console.log(request.nextUrl.host, request.nextUrl.hostname);
-
-    if (request.nextUrl.host === "ae.aloft.arrivechat.com" && request.nextUrl.pathname === "/") {
-        return NextResponse.redirect('https://ae.aloft.arrivechat.com/en/chat');
-    }
-
     const { searchParams } = request.nextUrl;
     const token = searchParams.get('token');
     const creds = await verifyToken(token as string);
