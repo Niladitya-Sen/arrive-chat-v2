@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { getDictionary } from '@/app/[lang]/dictionaries';
 import { cn } from '@/lib/utils';
 import { useSOSStore } from '@/store/SOSStore';
+import { Loader2 } from 'lucide-react';
 
 type MessageType = {
     message: string;
@@ -40,6 +41,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
     const [dict1, setDict1] = useState<Record<string, Record<string, string>>>();
     const router = useRouter();
     const SOS = useSOSStore(state => state);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function getDict() {
@@ -186,6 +188,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
 
     useEffect(() => {
         socket.on("bot_chat", (data) => {
+            setLoading(false);
             let m: { message: string; role: "captain"; time: string }[] = [];
             data.messages.forEach((msg: any) => {
                 m.push({
@@ -400,6 +403,7 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                 socket.emit("bot_chat", {
                     message, sessionId: cookies.getCookie('sessionId')
                 });
+                setLoading(true);
             }
             chatInputRef.current.value = '';
         }
@@ -442,9 +446,19 @@ export default function Chat({ isBot, isCaptainConnected, firstMessage, isCaptai
                     }}
                 >SOS</button>
                 <form
-                    className='bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black sm:mb-0'
+                    className='bg-white p-2 rounded-full flex flex-row border-[1.25px] border-black sm:mb-0 relative'
                     onSubmit={addToMessages}
                 >
+                    {
+                        loading && (
+                            <div className='absolute top-[-6.2rem] flex items-center justify-center w-full'>
+                                <div className='bg-white border-2 border-black rounded-2xl flex items-center justify-center gap-2 py-2 px-4'>
+                                    <Loader2 size={30} color='black' className='animate-spin' />
+                                    <p>Generating Response</p>
+                                </div>
+                            </div>
+                        )
+                    }
                     <Image
                         src="/img/smallGirl.png"
                         alt="smallGirl"
